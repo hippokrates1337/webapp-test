@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/hippokrates1337/webapp-test/issues"
   },
-  "homepage": "https://github.com/hippokrates1337/webapp-test#readme"
+  "homepage": "https://github.com/hippokrates1337/webapp-test#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
