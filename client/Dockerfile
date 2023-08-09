@@ -1,6 +1,6 @@
 # Use the official Node.js image.
 # https://hub.docker.com/_/node
-FROM node:16
+FROM node:18
 
 ENV PORT=8080
 
