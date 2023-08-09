@@ -5,9 +5,7 @@ FROM node:16
 ENV PORT=8080
 
 RUN set -ex && \
-    adduser node root && \
-      g++ make python \
-      openjdk8-jre
+    adduser node root
 
 # Copy application dependency manifests to the container image.
 # A wildcard is used to ensure both package.json AND package-lock.json are copied.
