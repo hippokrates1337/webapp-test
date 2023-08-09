@@ -6,7 +6,6 @@ ENV PORT=8080
 
 RUN set -ex && \
     adduser node root && \
-    chmod g+w /app && \
     apk add --update --no-cache \
       g++ make python \
       openjdk8-jre
