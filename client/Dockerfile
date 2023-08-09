@@ -4,9 +4,6 @@ FROM node:16
 
 ENV PORT=8080
 
-# Create and change to the app directory.
-WORKDIR /usr/src/app
-
 RUN set -ex && \
     adduser node root && \
     chmod g+w /app && \
