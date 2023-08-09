@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import User from './database.js';
 
 dotenv.config();
 
@@ -8,8 +9,9 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Test app successfully deployed!');
+app.get('/', async (req, res) => {
+  const allUsers = await User.find();
+  res.status(200).json(allUsers);
 });
 
 app.listen(port, () => {
