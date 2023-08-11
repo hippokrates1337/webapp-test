@@ -32,7 +32,7 @@ export default {
       withCredentials: false
     });
     this.users = response.data;
-    console.log(this.users);
+    console.log(response.data);
   }
 }
 </script>

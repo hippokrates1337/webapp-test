@@ -7,10 +7,9 @@ import User from './database.js';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
-
 app.use(cors({
-  origin: true
+  origin: '*',
+  optionsSuccessStatus: 200
 }));
 app.use(express.json());
 
@@ -31,6 +30,7 @@ app.get('/', async (req, res) => {
   }  
 });
 
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log('App is listening on port ' + port);
 });
