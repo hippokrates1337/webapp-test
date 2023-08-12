@@ -1,11 +1,8 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
 import cors from 'cors';
-import User from './database.js';
+import { connectDB } from './database/connection.js';
 
-dotenv.config();
-
+// Configure Express app to use CORS (all origins allowed) and JSON
 const app = express();
 app.use(cors({
   origin: '*',
@@ -13,23 +10,15 @@ app.use(cors({
 }));
 app.use(express.json());
 
-mongoose.set('strictQuery', false);
+// Connect database
+await connectDB();
 
-try {
-    await mongoose.connect(process.env.MONGODB_URI);
-} catch(err) {
-    console.error(err);
-}
-
+// Configure routes
 app.get('/', async (req, res) => {
-  if(mongoose.connection.readyState == 1) {
-    const allUsers = await User.find();
-    res.status(200).json(allUsers);
-  } else {
-    res.status(500).send('MongoDB connection failed.')
-  }  
+  res.status(200);
 });
 
+// Start the app
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log('App is listening on port ' + port);
