@@ -66,16 +66,12 @@ const DatapointSchema = new mongoose.Schema({
 
 const Datapoint = mongoose.model('Datapoints', DatapointSchema, 'Datapoints');
 
-const UserTimeSeriesSchema = new mongoose.Schema({
-    user: {
+const ConsumerTimeSeriesSchema = new mongoose.Schema({
+    consumer: {
         type: String,
         required: true
     },
     resource: {
-        type: String,
-        required: true
-    },
-    consumer: {
         type: String,
         required: true
     },
@@ -89,6 +85,6 @@ const UserTimeSeriesSchema = new mongoose.Schema({
     }
 });
 
-const UserTimeSeries = mongoose.model('UserTimeSeries', UserTimeSeriesSchema, 'UserTimeSeries');
+const ConsumerTimeSeries = mongoose.model('ConsumerTimeSeries', ConsumerTimeSeriesSchema, 'ConsumerTimeSeries');
 
-export {User, ResourceTypes, Consumer, Datapoint, UserTimeSeries};
+export {User, ResourceTypes, Consumer, Datapoint, ConsumerTimeSeries};
