@@ -87,4 +87,25 @@ const ConsumerTimeSeriesSchema = new mongoose.Schema({
 
 const ConsumerTimeSeries = mongoose.model('ConsumerTimeSeries', ConsumerTimeSeriesSchema, 'ConsumerTimeSeries');
 
-export {User, ResourceTypes, Consumer, Datapoint, ConsumerTimeSeries};
+const AggregateTimeSeriesSchema = new mongoose.Schema({
+    resource: {
+        type: String,
+        required: true
+    },
+    days: {
+        type: [Date],
+        required: true
+    },
+    consumption: {
+        type: [Number],
+        required: true
+    },
+    observations: {
+        type: [Number],
+        required: true
+    }
+});
+
+const AggregateTimeSeries = mongoose.model('AggregateTimeSeries', AggregateTimeSeriesSchema, 'AggregateTimeSeries');
+
+export {User, ResourceTypes, Consumer, Datapoint, ConsumerTimeSeries, AggregateTimeSeries};

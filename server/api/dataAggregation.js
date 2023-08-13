@@ -1,4 +1,4 @@
-import {User, ResourceTypes, Consumer, Datapoint, ConsumerTimeSeries} from '../database/models.js';
+import {User, ResourceTypes, Consumer, Datapoint, ConsumerTimeSeries, AggregateTimeSeries} from '../database/models.js';
 
 const createConsumerDailyData = async (consumers) => {
     // Load list of resource types
@@ -93,7 +93,7 @@ const createUserDailyData = async (user) => {
     consumers = consumers.map((elem) => (elem._id));
 
     createConsumerDailyData(consumers);
-}
+};
 
 const recreateUserDailyData = async () => {
     // Clear existing time series data
@@ -107,6 +107,63 @@ const recreateUserDailyData = async () => {
         console.log("Create daily data for user " + user.name);
         createUserDailyData(user);
     }
-}
+};
 
-export {recreateUserDailyData, createUserDailyData, createConsumerDailyData};
+const recreateAggregateTimeSeries = async () => {
+    // Clear existing time series data
+    AggregateTimeSeries.collection.drop();
+
+    // Load list of resource types
+    let resourceTypes = await ResourceTypes.find().exec();
+    resourceTypes = resourceTypes.map((elem) => elem._id);
+
+    // Create one time series by resource type
+    for(const resource of resourceTypes) {
+        // Load time series data
+        const data = await ConsumerTimeSeries.find({
+            resource: resource
+        }).exec();
+
+        let consumption = {};
+        let observations = {};
+        let aggregateDays = [], aggregateConsumption = [], aggregateObservations = [];
+        for(const dp of data) {
+            for(let i = 0; i < dp.days.length; i++) {
+                if(dp.days[i] in consumption) {
+                    consumption[dp.days[i]] += dp.consumption[i];
+                    observations[dp.days[i]] += 1;
+                } else {
+                    consumption[dp.days[i]] = dp.consumption[i];
+                    observations[dp.days[i]] = 1;
+                }
+            }
+        }
+
+        const order = Object.keys(consumption).sort((a, b) => {
+            return new Date(a).getTime() > new Date(b).getTime() ? 1 : -1;
+        });
+        
+        for(const d of order) {
+            aggregateDays.push(d);
+            aggregateConsumption.push(consumption[d]);
+            aggregateObservations.push(observations[d]);
+        }
+
+        if(aggregateDays.length > 0) {
+            const timeSeries = AggregateTimeSeries({
+                resource: resource,
+                days: aggregateDays,
+                consumption: aggregateConsumption,
+                observations: aggregateObservations
+            });
+    
+            try {
+                await timeSeries.save();
+            } catch(err) {
+                console.error(err);
+            }
+        }
+    }
+};
+
+export {recreateUserDailyData, createUserDailyData, createConsumerDailyData, recreateAggregateTimeSeries};
