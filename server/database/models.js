@@ -2,20 +2,29 @@ import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
     name: {
-        type: 'String',
+        type: String,
         required: true
     }
 });
 
 const User = mongoose.model('Users', UserSchema, 'Users');
 
+const ResourceTypeSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    }
+});
+
+const ResourceTypes = mongoose.model('ResourceTypes', ResourceTypeSchema, 'ResourceTypes');
+
 const ConsumerSchema = new mongoose.Schema({
     name: {
-        type: 'String',
+        type: String,
         required: true
     },
     user: {
-        type: 'String',
+        type: String,
         required: true
     }
 });
@@ -25,35 +34,61 @@ const Consumer = mongoose.model('Consumers', ConsumerSchema, 'Consumers');
 const DatapointSchema = new mongoose.Schema({
     // _id of the consumer
     consumer: {
-        type: 'String',
+        type: String,
         required: true
     },
     // Can be "Meter" or "Consumption"
     type: {
-        type: 'String',
+        type: String,
         required: true
     },
     // Should be "Electricity", "Warm Water" or "Cold Water"
     resource: {
-        type: 'String',
+        type: String,
         required: true
     },
     // Value in m3 for water and kWh for electricity
     value: {
-        type: 'Number',
+        type: Number,
         required: true
     },
     // startDate is optional because entries of type "meter" don't use it
     startDate: {
-        type: 'Date'
+        type: Date,
+        required: false
     },
     // Last date of the period for consumption entries or the day of measurement for meter entries
     endDate: {
-        type: 'Date',
+        type: Date,
         required: true
     }
 });
 
 const Datapoint = mongoose.model('Datapoints', DatapointSchema, 'Datapoints');
 
-export {User, Consumer, Datapoint};
+const UserTimeSeriesSchema = new mongoose.Schema({
+    user: {
+        type: String,
+        required: true
+    },
+    resource: {
+        type: String,
+        required: true
+    },
+    consumer: {
+        type: String,
+        required: true
+    },
+    days: {
+        type: [Date],
+        required: true
+    },
+    consumption: {
+        type: [Number],
+        required: true
+    }
+});
+
+const UserTimeSeries = mongoose.model('UserTimeSeries', UserTimeSeriesSchema, 'UserTimeSeries');
+
+export {User, ResourceTypes, Consumer, Datapoint, UserTimeSeries};

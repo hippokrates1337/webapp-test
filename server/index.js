@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { connectDB } from './database/connection.js';
+import publicDataRoutes from './routes/publicData.js';
 
 // Configure Express app to use CORS (all origins allowed) and JSON
 const app = express();
@@ -14,6 +15,8 @@ app.use(express.json());
 await connectDB();
 
 // Configure routes
+app.use('/publicData', publicDataRoutes);
+
 app.get('/', async (req, res) => {
   res.status(200);
 });

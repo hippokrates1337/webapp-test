@@ -1,5 +1,5 @@
 import express from 'express';
-import { Datapoint } from '../database/models.js';
+import {createUserDailyData} from '../api/dataAggregation.js';
 
 const route = express();
 
@@ -13,11 +13,7 @@ const route = express();
 */
 
 route.get('/', async (req, res) => {
-    try {
-        const dataset = await Datapoint.find();
-    } catch(err) {
-        console.errog(err);
-    }
-
-    
+    await createUserDailyData();
 });
+
+export default route;
