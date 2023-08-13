@@ -1,5 +1,5 @@
 import express from 'express';
-import {createUserDailyData} from '../api/dataAggregation.js';
+import {recreateUserDailyData} from '../api/dataAggregation.js';
 
 const route = express();
 
@@ -13,7 +13,7 @@ const route = express();
 */
 
 route.get('/', async (req, res) => {
-    await createUserDailyData();
+    await recreateUserDailyData();
 });
 
 export default route;
