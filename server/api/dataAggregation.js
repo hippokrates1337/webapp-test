@@ -110,13 +110,13 @@ const recreateUserDailyData = async () => {
 
     // Recreate all user time series data
     for(const user of users) {
-        console.log("Create daily data for user " + user.name);
         createUserDailyData(user);
     }
 };
 
 const recreateAggregateTimeSeries = async () => {
     console.log('DataAggregation.js - Executing request to recreate the aggregate consumption time series...');
+    
     // Clear existing time series data
     AggregateTimeSeries.collection.drop();
 
