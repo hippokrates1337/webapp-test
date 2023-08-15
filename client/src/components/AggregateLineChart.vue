@@ -1,5 +1,8 @@
 <template>
-    <apexchart type="area" :options="options" :series="series" :key="chartKey"></apexchart>
+    <apexchart type="area" :options="options" :series="series" :key="chartKey" v-if="render"></apexchart>
+    <div v-else>
+      No data to display
+    </div>
   </template>
   
   <script setup>
@@ -8,16 +11,22 @@
     import de from 'apexcharts/dist/locales/de.json';
 
     const props = defineProps({
-      resourceIndex: Number
+      resource: Object
     });
   
     const chartKey = ref(0);
     let options = {};
     let series = [];
+    let render = ref(false);
   
     onMounted(async () => {
       const chartData = await axios.get(process.env.VUE_APP_SERVER_URI + '/publicData/allConsumption');
-      const resourceTypes = await axios.get(process.env.VUE_APP_SERVER_URI + '/publicData/resourceTypes');
+      const resourceIndex = chartData.data.findIndex((elem) => elem.resource == props.resource._id);
+
+      // Check for problems with ID being passed
+      if(resourceIndex == -1) {
+        return;
+      }
   
       options = {
         chart: {
@@ -26,10 +35,10 @@
           defaultLocale: 'de'
         },
         title: {
-          text: "Aggregierter Ressourcenverbrauch pro Tag"
+          text: "Aggregierter " + props.resource.name + "verbrauch pro Tag"
         },
         xaxis: {
-          categories: chartData.data[props.resourceIndex].days,
+          categories: chartData.data[resourceIndex].days,
           type: 'datetime'
         },
         yaxis: {
@@ -40,7 +49,7 @@
           },
           tickAmount: 6,
           title: {
-            text: resourceTypes.data[props.resourceIndex].unit + "/Tag"
+            text: props.resource.unit + "/Tag"
           }
         },
         dataLabels: {
@@ -75,16 +84,15 @@
   
       series = [{
         name: 'Täglicher Verbrauch',
-        data: chartData.data[props.resourceIndex].consumption
+        data: chartData.data[resourceIndex].consumption
       }];
+
+      if(chartData.data[resourceIndex].consumption.length > 0) {
+        render.value = true;
+      }
   
       // Force Vue to re-render the chart (as no refs have been changed, there is no trigger otherwise)
       chartKey.value +=1;
     });
-  
   </script>
-  
-  <style>
-  
-  </style>
   
