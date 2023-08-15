@@ -4,6 +4,8 @@ import { AggregateTimeSeries, ResourceTypes } from '../database/models.js';
 const route = express();
 
 route.get('/allConsumption', async (req, res) => {
+    console.log('PublicData.js - Received request for all consumption data...');
+
     let response;
 
     try {
@@ -16,6 +18,8 @@ route.get('/allConsumption', async (req, res) => {
 });
 
 route.get('/resourceTypes', async (req, res) => {
+    console.log('PublicData.js - Received request for resouce types...');
+
     let response;
 
     try {

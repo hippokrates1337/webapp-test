@@ -1,6 +1,8 @@
 import {User, ResourceTypes, Consumer, Datapoint, ConsumerTimeSeries, AggregateTimeSeries} from '../database/models.js';
 
 const createConsumerDailyData = async (consumers) => {
+    console.log('DataAggregation.js - Executing request to create daily consumption data for consumers ' + consumers);
+
     // Load list of resource types
     let resourceTypes = await ResourceTypes.find().exec();
     resourceTypes = resourceTypes.map((elem) => elem._id);
@@ -85,6 +87,8 @@ const createConsumerDailyData = async (consumers) => {
 };
 
 const createUserDailyData = async (user) => {
+    console.log('DataAggregation.js - Executing request to create daily consumption data for user ' + user.name + '/' + user._id);
+
     // Retrieve list of consumers per user
     let consumers = await Consumer.find({
         user: user._id
@@ -96,6 +100,8 @@ const createUserDailyData = async (user) => {
 };
 
 const recreateUserDailyData = async () => {
+    console.log('DataAggregation.js - Executing request to recreate daily consumption data for all users...');
+
     // Clear existing time series data
     ConsumerTimeSeries.collection.drop();
 
@@ -110,6 +116,7 @@ const recreateUserDailyData = async () => {
 };
 
 const recreateAggregateTimeSeries = async () => {
+    console.log('DataAggregation.js - Executing request to recreate the aggregate consumption time series...');
     // Clear existing time series data
     AggregateTimeSeries.collection.drop();
 

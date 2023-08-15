@@ -9,6 +9,7 @@ const connectDB = async () => {
     mongoose.set('strictQuery', false);
 
     try {
+        console.log('Connection.js - Trying to establish connection to: ' + process.env.MONGODB_URI);
         return await mongoose.connect(process.env.MONGODB_URI, {
             dbName: 'ResourceConsumption'
         });
