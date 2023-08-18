@@ -24,7 +24,7 @@
     const username = ref('');
     const password = ref('')
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const authStore = useAuthStore();
         authStore.login(username.value, password.value);
     }
