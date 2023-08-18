@@ -1,6 +1,7 @@
 import { router } from "@/router";
 import { defineStore } from "pinia";
 import axios from 'axios';
+import { useAlertStore } from "@/stores/alertStore.js";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -26,7 +27,8 @@ export const useAuthStore = defineStore('auth', {
                 router.push(this.returnUrl || '/');
             } catch(error) {
                 // TO DO: Implement error handling
-                console.error(error);
+                const alertStore = useAlertStore();
+                alertStore.error(error.response.data);
             }
         },
         logout() {
