@@ -3,11 +3,15 @@
         <h4 class="card-header">Als existierender Benutzer anmelden</h4>
         <div class="card-body">
             <form @submit.prevent="handleSubmit">
-                <div class="form-group">
-                    <label class="form-label">Benutzername</label>
-                    <input v-model="userName" id="username" type="text" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input v-model="username" id="username" type="text" class="form-control" placeholder="John Doe" required />
+                    <label for="username" class="form-label">Benutzername</label>
                 </div>
-                <button class="btn" type="submit">Abschicken</button>
+                <div class="form-floating mb-3">
+                    <input v-model="password" id="password" type="password" class="form-control" placeholder="jdoe@example.com" required />
+                    <label for="password" class="form-label">Passwort</label>
+                </div>
+                <button class="btn btn-primary" type="submit">Abschicken</button>
             </form>
         </div>
     </div>
@@ -15,10 +19,13 @@
 
 <script setup>
     import { ref } from 'vue';
+    import { useAuthStore } from '@/stores/authStore.js';
 
-    const userName = ref('');
+    const username = ref('');
+    const password = ref('')
 
     const handleSubmit = () => {
-        console.log(userName.value);
+        const authStore = useAuthStore();
+        authStore.login(username.value, password.value);
     }
 </script>
