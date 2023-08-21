@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { connectDB } from './database/connection.js';
 import publicDataRoutes from './routes/publicData.js';
+import accountRoutes from './routes/account.js';
 import {recreateAggregateTimeSeries, recreateUserDailyData} from './api/dataAggregation.js';
 
 // Configure Express app to use CORS (all origins allowed) and JSON
@@ -21,6 +22,7 @@ await connectDB();
 // Configure routes
 console.log('Index.js - Setting up routes...');
 app.use('/publicData', publicDataRoutes);
+app.use('/account', accountRoutes);
 
 app.get('/', async (req, res) => {
   res.status(200);
