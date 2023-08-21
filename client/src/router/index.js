@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import PublicLanding from '@/views/PublicLanding.vue';
 import accountRoutes from '@/router/accountRoutes.js';
+import userRoutes from '@/router/userRoutes.js';
 import { useAlertStore } from "@/stores/alertStore";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -10,6 +11,7 @@ export const router = createRouter({
     routes: [
         {path: '/', component: PublicLanding},
         { ...accountRoutes},
+        { ...userRoutes },
         // Catch all redirect to home page
         { path: '/:pathMatch(.*)*', redirect: '/' }
     ]
