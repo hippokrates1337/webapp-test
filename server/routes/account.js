@@ -1,6 +1,7 @@
 import express from 'express';
 import { User } from '../database/models.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const route = express();
 
@@ -20,15 +21,16 @@ route.post('/login', async (req, res) => {
     }
 
     if(!response) {
+        console.log('User ' + req.body.user + ' not found!');
         res.status(404).send('Could not find user in database!');
     } else {
         const match = await bcrypt.compare(req.body.password, response.password);
         if(match) {
             res.status(200).json({
-                user: response.name,
+                name: response.name,
                 id: response._id,
-                // TO DO: Implement JWT
-                token: 'DUMMY-TOKEN'
+                // Send back a JSON webt token without expiry date
+                token: jwt.sign(response.name, process.env.TOKEN_SECRET, {})
             });
         } else {
             res.status(401).send('Password does not match!');
