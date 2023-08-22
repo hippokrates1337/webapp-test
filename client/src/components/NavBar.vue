@@ -5,8 +5,8 @@
             <div class="navbar-nav">
                 <router-link to="/" class="nav-item nav-link">Start</router-link>
                 <router-link v-show="authStore.user" to="/user" class="nav-item nav-link">Meine Daten</router-link>
-                <router-link v-show="!authStore.user" to="/account" class="nav-item nav-link">Login</router-link>
-                <button v-show="authStore.user" @click="authStore.logout()" class="btn btn-link nav-item nav-link">Logout</button>
+                <router-link v-show="!authStore.user" to="/account" class="nav-item nav-link">Anmelden</router-link>
+                <button v-show="authStore.user" @click="authStore.logout()" class="btn btn-link nav-item nav-link">Abmelden</button>
             </div>
         </div>
     </nav>

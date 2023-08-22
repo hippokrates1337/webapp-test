@@ -24,6 +24,7 @@ router.beforeEach(async (to) => {
 
     // Redirect to login page if user attemps to access anything other than the public pages
     const publicPages = [
+        '/',
         '/account/login',
         '/account/register'
     ];
