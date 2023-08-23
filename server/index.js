@@ -30,8 +30,8 @@ app.get('/', async (req, res) => {
   res.status(200);
 });
 
-await recreateUserDailyData();
-await recreateAggregateTimeSeries();
+//await recreateUserDailyData();
+//await recreateAggregateTimeSeries();
 
 // Start the app
 console.log('Index.js - Starting the app...');

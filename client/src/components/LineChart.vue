@@ -20,6 +20,10 @@
     let render = ref(false);
   
     onMounted(async () => {
+        if(!props.data[0]) {
+            return
+        }
+
         for(const d of props.data) {
             series.push({
                 name: 'Täglicher Verbrauch - ' + d.consumer,
