@@ -1,7 +1,7 @@
 <template>
     <apexchart type="area" :options="options" :series="series" :key="chartKey" v-if="render"></apexchart>
     <div v-else>
-      No data to display
+      Keine Daten verfügbar
     </div>
   </template>
   

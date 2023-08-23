@@ -12,13 +12,16 @@ route.get('/allConsumption', async (req, res) => {
         response = await AggregateTimeSeries.find().exec();
     } catch(error) {
         console.error(error);
+        res.status(500).send('Error accessing aggregate data set!')
     }
     
-    res.status(200).json(response);
+    if(response) {
+        res.status(200).json(response);
+    }
 });
 
 route.get('/resourceTypes', async (req, res) => {
-    console.log('PublicData.js - Received request for resouce types...');
+    console.log('PublicData.js - Received request for resource types...');
 
     let response;
 

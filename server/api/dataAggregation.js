@@ -19,12 +19,45 @@ const createConsumerDailyData = async (consumers) => {
 
     // Loop over all data points to generate resource consumption history
     for(const resource of resourceTypes) {
+        // Determine the time series on user (not just consumer) level in order to pad the data
+        let firstDay = new Date(), lastDay = new Date(1970, 0, 1);
+        let data = userData.filter((elem) => {
+            return elem.resource == resource
+        });
+        for(const d of data) {
+            if(d.type == 'Meter') {
+                // Meter readings are assumed to be end-of-day readings so shifted by one day
+                if(new Date(d.endDate) < firstDay) firstDay = new Date(new Date(d.endDate).getTime() + 1000 * 60 * 60 * 24);
+            } else {
+                if(new Date(d.startDate) < firstDay) firstDay = new Date(d.startDate);         
+            }
+            if(new Date(d.endDate) > lastDay) lastDay = new Date(d.endDate);
+        }
+
         for(const consumer of consumers) {
             // Filter out only current resource type; data is pre-sorted by date as part of the MongoDB query
-            let data = userData.filter((elem) => {
+            data = userData.filter((elem) => {
                 return elem.resource == resource && elem.consumer == consumer
             });
             let days = [], consumption = [];
+
+            if(data.length == 0) {
+                continue;
+            }
+
+            // Pad data at the beginning
+            let padding = 0;
+            if(data[0].type == 'Meter') {
+                if(new Date(data[0].endDate) > firstDay) padding = Math.floor((new Date(data[0].endDate) - firstDay) / (1000 * 60 * 60 * 24));
+            } else {
+                if(new Date(data[0].startDate) > firstDay) padding = Math.floor((new Date(data[0].startDate) - firstDay) / (1000 * 60 * 60 * 24));         
+            }
+            if(padding > 0) {
+                for(let i = 0; i < padding; i++) {
+                    days.push(new Date(firstDay.getTime() + i * 1000 * 60 * 60 * 24));
+                    consumption.push(0);
+                }
+            }
 
             for(let i = 0; i < data.length; i++) {
                 let duration, startDate, avgConsumption;
@@ -65,6 +98,20 @@ const createConsumerDailyData = async (consumers) => {
                 for(let j = 0; j <= duration; j++) {
                     days.push(new Date(startDate.getTime() + j * 1000 * 60 * 60 * 24));
                     consumption.push(avgConsumption);
+                }
+            }
+
+            // Pad data at the end
+            if(new Date(data[data.length - 1].endDate) < lastDay) {
+                padding = (lastDay - new Date(data[data.length - 1].endDate)) / (1000 * 60 * 60 * 24);  
+            } else {
+                padding = 0;
+            }
+            
+            if(padding > 0) {
+                for(let i = 0; i < padding; i++) {
+                    days.push(new Date(new Date(data[data.length - 1].endDate).getTime() + (i + 1) * 1000 * 60 * 60 * 24));
+                    consumption.push(0);
                 }
             }
 
