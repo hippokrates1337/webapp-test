@@ -26,6 +26,15 @@ route.post('/login', async (req, res) => {
     } else {
         const match = await bcrypt.compare(req.body.password, response.password);
         if(match) {
+            // Store user login timestamp
+            try {
+                response.lastLogin = new Date();
+                await response.save();
+            } catch(error) {
+                console.error(err);
+            }
+
+            // Send back login information
             res.status(200).json({
                 name: response.name,
                 id: response._id,
