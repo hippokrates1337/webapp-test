@@ -47,6 +47,7 @@
         const authStore = useAuthStore();
         const alertStore = useAlertStore();
         let response;
+        
         // Load consumer-level time series data
         try {
             response = await axios.request({
