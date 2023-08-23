@@ -8,10 +8,10 @@
             </template>
           </div>
         </nav>
-        <div class="tab-content p-2" id="nav-tabContent">
+        <div class="tab-content p-2" id="nav-tabContent" v-if="render">
           <template v-for="(res, index) in resources" :key="res.id">
             <div class="tab-pane fade" :class="{'active show' : index == 0}" :id="'nav-' + index" role="tabpanel">
-              <AggregateLineChart :resource="resources[index]" />
+              <LineChart :resource="resources[index]" :data="chartData.filter((elem) => elem.resource == resources[index]._id)" />
             </div>
           </template>
         </div>  
@@ -23,22 +23,39 @@
   <script setup>
     import { ref, onMounted } from 'vue';
     import axios from 'axios';
-    import AggregateLineChart from '@/components/AggregateLineChart.vue';
+    import LineChart from '@/components/LineChart.vue';
     import { useAlertStore } from '@/stores/alertStore';
   
-    const resources = ref([]);
+    let resources = [];
+    let chartData = [];
+    let render = ref(false);
   
     onMounted(async () => {
+      const alertStore = useAlertStore();
       let response;
+
+      // Load resource type data
       try {
         response = await axios.get(process.env.VUE_APP_SERVER_URI + '/publicData/resourceTypes');
       } catch(error) {
-        const alertStore = useAlertStore();
         alertStore.error('Serverfehler beim Abrufen der Daten! ' + error)
       }
       
       if(response && response.status == 200) {
-        resources.value = response.data;
-      } 
+        resources = response.data;
+      }
+
+      // Load consumption data
+      try {
+        response = await axios.get(process.env.VUE_APP_SERVER_URI + '/publicData/allConsumption');
+      } catch(error) {
+        alertStore.error('Serverfehler beim Abrufen der Daten! ' + error)
+      }
+      
+      if(response && response.status == 200) {
+        chartData = response.data;
+      }
+
+      render.value = true;
     });
   </script>

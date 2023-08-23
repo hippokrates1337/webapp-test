@@ -31,7 +31,7 @@
         if(!props.aggregate) {
             for(const d of props.data) {
                 series.push({
-                    name: 'Täglicher Verbrauch - ' + props.consumers.filter((elem) => elem._id == d.consumer)[0].name,
+                    name: props.consumers ? 'Täglicher Verbrauch - ' + props.consumers.filter((elem) => elem._id == d.consumer)[0].name : '',
                     data: d.consumption
                 });
             }
