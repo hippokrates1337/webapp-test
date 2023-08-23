@@ -6,34 +6,60 @@
   </template>
   
   <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, watch } from 'vue';
     import de from 'apexcharts/dist/locales/de.json';
 
     const props = defineProps({
       resource: Object,
-      data: Object
+      data: Object,
+      consumers: Object,
+      aggregate: Boolean
     });
   
     const chartKey = ref(0);
     let options = {};
     let series = [];
     let render = ref(false);
-  
+
+    const createSeries = () => {
+        // If the aggregate flag is set to true, add up all data across consumers (by resource); otherwise, add individual series
+        if(!props.data[0]) {
+            return
+        }
+        
+        series = [];
+        if(!props.aggregate) {
+            for(const d of props.data) {
+                series.push({
+                    name: 'Täglicher Verbrauch - ' + props.consumers.filter((elem) => elem._id == d.consumer)[0].name,
+                    data: d.consumption
+                });
+            }
+        } else {
+            let consumption = [...props.data[0].consumption];
+            for(let i = 1; i < props.data.length; i++) {
+                for(let j = 0; j < props.data[i].consumption.length; j++) {
+                    consumption[j] += props.data[i].consumption[j];
+                }
+            }
+
+            series.push({
+                name: 'Täglicher Verbrauch - Aggregiert',
+                data: consumption
+            });
+        }
+    }
+
     onMounted(async () => {
         if(!props.data[0]) {
             return
         }
 
-        for(const d of props.data) {
-            series.push({
-                name: 'Täglicher Verbrauch - ' + d.consumer,
-                data: d.consumption
-            });
-        }
+        createSeries();
 
         options = {
             chart: {
-                id: "Aggregate consumption chart",
+                id: "Consumption chart for resource " + props.resource._id,
                 locales: [de],
                 defaultLocale: 'de'
             },
@@ -91,6 +117,10 @@
     
         // Force Vue to re-render the chart (as no refs have been changed, there is no trigger otherwise)
         chartKey.value +=1;
+    });
+
+    watch(() => props.aggregate, () => {
+        createSeries();
     });
   </script>
   
