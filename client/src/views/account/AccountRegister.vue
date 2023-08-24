@@ -19,6 +19,10 @@
                     <input v-model="passwordRepeat" id="passwordRepeat" type="password" class="form-control" placeholder="XXX" required />
                     <label for="passwordRepeat" class="form-label">Passwort wiederholen</label>
                 </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" value="" id="termsofuse" required/>
+                    <label for="termsofuse" class="form-check-label">Mit meiner Anmeldung stimme ich den Nutzungsbestimmungen zu</label>
+                </div>
                 <button class="btn btn-primary" type="submit">Abschicken</button>
             </form>
         </div>
