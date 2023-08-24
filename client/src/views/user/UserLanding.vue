@@ -36,17 +36,23 @@
     import { useAuthStore } from '@/stores/authStore';
     import { useAlertStore } from '@/stores/alertStore';
     import LineChart from '@/components/LineChart.vue';
+    import { useResourceStore } from '@/stores/resourceStore';
+    import { storeToRefs } from 'pinia';
 
     let userData = null;
-    let resources = null;
     let consumerData = null;
     const render = ref(false);
     const aggregate = ref(false);
+    const resourceStore = useResourceStore();
+    const { resources } = storeToRefs(resourceStore);
 
     onMounted(async () => {
         const authStore = useAuthStore();
         const alertStore = useAlertStore();
         let response;
+
+        // Load resource type data (do not force update)
+        resourceStore.loadResources(false);
         
         // Load consumer-level time series data
         try {
@@ -63,17 +69,6 @@
         
         if(response && response.status == 200) {
             userData = response.data;
-        }
-
-        // Load resource type data
-        try {
-            response = await axios.get(process.env.VUE_APP_SERVER_URI + '/publicData/resourceTypes');
-        } catch(error) {
-            alertStore.error('Serverfehler beim Abrufen der Daten! ' + error)
-        }
-
-        if(response && response.status == 200) {
-            resources = response.data;
         }
 
         // Load consumer information to hand down to child components
