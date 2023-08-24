@@ -3,11 +3,11 @@
         <h4 class="card-header">Als existierender Benutzer anmelden</h4>
         <div class="card-body">
             <form @submit.prevent="handleSubmit">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-2">
                     <input v-model="username" id="username" type="text" class="form-control" placeholder="John Doe" required />
                     <label for="username" class="form-label">Benutzername</label>
                 </div>
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-2">
                     <input v-model="password" id="password" type="password" class="form-control" placeholder="jdoe@example.com" required />
                     <label for="password" class="form-label">Passwort</label>
                 </div>

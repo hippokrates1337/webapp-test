@@ -6,17 +6,16 @@ import jwt from 'jsonwebtoken';
 const route = express();
 
 route.post('/login', async (req, res) => {
-    console.log('Received login request from user ' + req.body.user);
+    console.log('Account.js - Received login request from user ' + req.body.user);
 
     let response;
     try {
         // Assumes every user name is unique
-        // TO DO: Ensure this as part of registration functionality
         response = await User.findOne({
             name: req.body.user
         }).exec();
-    } catch(err) {
-        console.error(err);
+    } catch(error) {
+        console.error(error);
         res.status(500).send('Internal database error!');
     }
 
@@ -31,7 +30,7 @@ route.post('/login', async (req, res) => {
                 response.lastLogin = new Date();
                 await response.save();
             } catch(error) {
-                console.error(err);
+                console.error(error);
             }
 
             // Send back login information
@@ -45,6 +44,44 @@ route.post('/login', async (req, res) => {
             res.status(401).send('Password does not match!');
         }
     } 
+});
+
+route.post('/register', async (req, res) => {
+    console.log('Account.js - Received register request from user ' + req.body.user);
+
+    let response;
+    try {
+        //Check whether username exists already
+        response = await User.find({
+            name: req.body.user
+        }).exec();
+
+        if(response.length > 0) {
+            res.status(400).send('User name ' + req.body.user + ' already exists in database!');
+            return;
+        }
+
+        // Create new user
+        let pwdhash = await bcrypt.hash(req.body.password, 10);
+        let user = new User({
+            name: req.body.user,
+            password: pwdhash,
+            email: req.body.email,
+            registeredOn: new Date(),
+            lastLogin: new Date()
+        });
+
+        response = await user.save();
+        res.status(200).json({
+            name: response.name,
+            id: response._id,
+            // Send back a JSON webt token without expiry date
+            token: jwt.sign(response.name, process.env.TOKEN_SECRET, {})
+        });
+    } catch(error) {
+        console.error(error);
+        res.status(500).send('Internal database error!');
+    }
 });
 
 export default route;
