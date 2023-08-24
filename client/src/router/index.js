@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import PublicLanding from '@/views/PublicLanding.vue';
+import TermsOfUse from '@/views/TermsOfUse.vue';
+import DataProtection from '@/views/DataProtection.vue';
+import ImprintPage from '@/views/ImprintPage.vue';
 import accountRoutes from '@/router/accountRoutes.js';
 import userRoutes from '@/router/userRoutes.js';
 import { useAlertStore } from "@/stores/alertStore";
@@ -10,6 +13,9 @@ export const router = createRouter({
     linkActiveClass: 'active',
     routes: [
         {path: '/', component: PublicLanding},
+        {path: '/termsofuse', component: TermsOfUse},
+        {path: '/dataprotection', component: DataProtection},
+        {path: '/imprint', component: ImprintPage},
         { ...accountRoutes},
         { ...userRoutes },
         // Catch all redirect to home page
@@ -25,6 +31,9 @@ router.beforeEach(async (to) => {
     // Redirect to login page if user attemps to access anything other than the public pages
     const publicPages = [
         '/',
+        '/termsofuse',
+        '/dataprotection',
+        '/imprint',
         '/account/login',
         '/account/register'
     ];

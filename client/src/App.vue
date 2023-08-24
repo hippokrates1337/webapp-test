@@ -5,10 +5,12 @@
     <div class="container">
       <router-view />
     </div>
+    <PageFooter />
   </div>    
 </template>
 
 <script setup>
   import NavBar from '@/components/NavBar.vue';
   import DisplayAlert from '@/components/DisplayAlert.vue';
+  import PageFooter from '@/components/PageFooter.vue';
 </script>
