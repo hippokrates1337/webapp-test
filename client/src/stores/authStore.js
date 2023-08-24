@@ -11,6 +11,27 @@ export const useAuthStore = defineStore('auth', {
         returnURL: null
     }),
     actions: {
+        async register(username, email, password) {
+            const alertStore = useAlertStore();
+            let response;
+
+            try {
+                response = await axios.post(process.env.VUE_APP_SERVER_URI + '/account/register', {
+                    user: username,
+                    email: email,
+                    password: password
+                });
+
+                // Store user credentials
+                this.user = response.data;
+                localStorage.setItem('user', JSON.stringify(response.data));
+
+                // Redirect to user landing page
+                router.push('/user');
+            } catch(error) {
+                alertStore.error(error.response.data);
+            }
+        },
         async login(username, password) {
             let response;
             try {
@@ -23,8 +44,8 @@ export const useAuthStore = defineStore('auth', {
                 this.user = response.data;
                 localStorage.setItem('user', JSON.stringify(response.data));
 
-                // Redirect to previous url or default to home page
-                router.push(this.returnUrl || '/');
+                // Redirect to previous url or default to user landing page
+                router.push(this.returnUrl || '/user');
             } catch(error) {
                 // TO DO: Implement error handling
                 const alertStore = useAlertStore();
