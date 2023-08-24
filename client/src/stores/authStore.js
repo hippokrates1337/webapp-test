@@ -8,7 +8,9 @@ export const useAuthStore = defineStore('auth', {
         // Initialize the user from local storage (if stored)
         user: JSON.parse(localStorage.getItem('user')),
         // If user is redirected to login from another page, that page's URL will be stored here
-        returnURL: null
+        returnURL: null,
+        // Stores cookie consent information
+        cookieConsent: false
     }),
     actions: {
         async register(username, email, password) {
