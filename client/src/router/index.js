@@ -28,6 +28,13 @@ router.beforeEach(async (to) => {
     const alertStore = useAlertStore();
     alertStore.clear();
 
+    const authStore = useAuthStore();
+
+    if(!authStore.cookieConsent) {
+        alertStore.error('Sie müssen der Nutzung von Cookies zustimmen, um die Webseite ordnungsgemäß nutzen zu können.');
+        return;
+    }
+
     // Redirect to login page if user attemps to access anything other than the public pages
     const publicPages = [
         '/',
@@ -38,7 +45,6 @@ router.beforeEach(async (to) => {
         '/account/register'
     ];
     const authRequired = !publicPages.includes(to.path);
-    const authStore = useAuthStore();
 
     if(authRequired && !authStore.user) {
         authStore.returnURL = to.fullPath;
