@@ -38,7 +38,7 @@
       let response;
 
       // Load resource data (not forcing an update if they are already loaded)
-      await resourceStore.loadResources(false);
+      await resourceStore.load(false);
 
       // Load consumption data
       try {
