@@ -2,6 +2,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <div class="navbar-brand">[Logo]</div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navharSupportedContent" aria-expanded="false" aria-label="Navigation ein- oder ausklappen">
+                <span class="navbar-toggler-icon"></span>
+            </button>
             <div class="navbar-nav">
                 <router-link to="/" class="nav-item nav-link">Start</router-link>
                 <router-link v-show="authStore.user" to="/user" class="nav-item nav-link">Meine Daten</router-link>

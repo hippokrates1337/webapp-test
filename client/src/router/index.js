@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import * as bootstrap from 'bootstrap';
 import PublicLanding from '@/views/PublicLanding.vue';
 import TermsOfUse from '@/views/TermsOfUse.vue';
 import DataProtection from '@/views/DataProtection.vue';
@@ -32,7 +33,8 @@ router.beforeEach(async (to) => {
 
     if(!authStore.cookieConsent) {
         alertStore.error('Sie müssen der Nutzung von Cookies zustimmen, um die Webseite ordnungsgemäß nutzen zu können.');
-        return;
+        const modal = bootstrap.Modal.getOrCreateInstance('#cookieconsent');
+        modal.show();
     }
 
     // Redirect to login page if user attemps to access anything other than the public pages
