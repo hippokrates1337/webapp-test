@@ -6,7 +6,17 @@ import { useAuthStore } from "./authStore";
 export const useConsumerStore = defineStore('consumers', {
     state: () => ({
         consumers: null,
-        activeConsumer: null
+        activeConsumer: {
+            name: '',
+            type: '',
+            sqm: null,
+            coldWaterOnly: null,
+            adults: null,
+            children: null,
+            garden: null,
+            zipcode: ''
+        },
+        editingStage: 'inactive'
     }),
     actions: {
         async load(forceUpdate) {
@@ -34,6 +44,37 @@ export const useConsumerStore = defineStore('consumers', {
             if(response && response.status == 200) {
                 this.consumers = response.data;
             }
+        },
+        beginEdit(id) {
+            if(id) {
+                this.activeConsumer = this.consumers.filter((elem) => elem._id == id)[0];
+            } else {
+                this.activeConsumer = {
+                    name: '',
+                    type: '',
+                    sqm: null,
+                    coldWaterOnly: null,
+                    adults: null,
+                    children: null,
+                    garden: null,
+                    zipcode: ''
+                };
+            }
+
+            this.editingStage = 'editing';
+        },
+        endEdit() {
+            this.activeConsumer = {
+                name: '',
+                type: '',
+                sqm: null,
+                coldWaterOnly: null,
+                adults: null,
+                children: null,
+                garden: null,
+                zipcode: ''
+            };
+            this.editingStage = 'inactive';
         }
     }
 });

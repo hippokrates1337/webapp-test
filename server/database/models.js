@@ -42,6 +42,34 @@ const ConsumerSchema = new mongoose.Schema({
     user: {
         type: String,
         required: true
+    },
+    type: {
+        type: String,
+        required: false,
+    },
+    sqm: {
+        type: Number,
+        required: false
+    },
+    coldWaterOnly: {
+        type: Boolean,
+        required: false
+    },
+    adults: {
+        type: Number,
+        required: false
+    },
+    children: {
+        type: Number,
+        required: false
+    },
+    garden: {
+        type: Boolean,
+        required: false
+    },
+    zipcode: {
+        type: Number,
+        required: false
     }
 });
 

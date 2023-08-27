@@ -25,10 +25,16 @@
     onMounted(async () => {
         // Load consumers (but don't force update)
         await consumerStore.load(false);
+
+        // Ensure that the active consumer is reset when the dialog is closed
+        const modal = document.getElementById('editconsumer');
+        modal.addEventListener('hide.bs.modal', () => {
+            consumerStore.endEdit();
+        });
     });
 
     const showEditDialog = (consumer) => {
-        consumerStore.activeConsumer = consumer;
+        consumerStore.beginEdit(consumer);
 
         const modal = bootstrap.Modal.getOrCreateInstance('#editconsumer');
         modal.show();
