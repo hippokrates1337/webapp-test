@@ -32,7 +32,6 @@ router.beforeEach(async (to) => {
     const authStore = useAuthStore();
 
     if(!authStore.cookieConsent) {
-        alertStore.error('Sie müssen der Nutzung von Cookies zustimmen, um die Webseite ordnungsgemäß nutzen zu können.');
         const modal = bootstrap.Modal.getOrCreateInstance('#cookieconsent');
         modal.show();
     }

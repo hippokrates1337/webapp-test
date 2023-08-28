@@ -3,7 +3,7 @@
         <li v-for="consumer in consumerStore.consumers" :key="consumer._id" class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
             <div class="fw-bold">{{consumer.name}}</div>
-                [Consumer attributes...]
+                {{consumer.type ? consumer.type : 'Unbekannter Typ'}}
             </div>
             <span class="badge bg-primary rounded-pill mt-1">#</span>
             <button class="btn btn-sm" @click="showEditDialog(consumer._id)"><i class="bi bi-pencil"></i></button>
@@ -25,12 +25,6 @@
     onMounted(async () => {
         // Load consumers (but don't force update)
         await consumerStore.load(false);
-
-        // Ensure that the active consumer is reset when the dialog is closed
-        const modal = document.getElementById('editconsumer');
-        modal.addEventListener('hide.bs.modal', () => {
-            consumerStore.endEdit();
-        });
     });
 
     const showEditDialog = (consumer) => {

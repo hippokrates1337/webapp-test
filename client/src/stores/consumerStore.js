@@ -38,7 +38,7 @@ export const useConsumerStore = defineStore('consumers', {
                     url: process.env.VUE_APP_SERVER_URI + '/privateData/consumers/' + authStore.user.id
                 });
             } catch(error) {
-                alertStore.error('Serverfehler beim Abrufen der Daten!' + error)
+                alertStore.error('Serverfehler beim Abrufen der Daten!' + error);
             }
               
             if(response && response.status == 200) {
@@ -47,7 +47,7 @@ export const useConsumerStore = defineStore('consumers', {
         },
         beginEdit(id) {
             if(id) {
-                this.activeConsumer = this.consumers.filter((elem) => elem._id == id)[0];
+                this.activeConsumer = { ...this.consumers.filter((elem) => elem._id == id)[0]};
             } else {
                 this.activeConsumer = {
                     name: '',
@@ -75,6 +75,34 @@ export const useConsumerStore = defineStore('consumers', {
                 zipcode: ''
             };
             this.editingStage = 'inactive';
+        },
+        async saveChanges() {
+            const authStore = useAuthStore();
+            const alertStore = useAlertStore();
+            let response;
+
+            try {
+                // This is an update
+                response = await axios.request({
+                    headers: {
+                        'Authorization': 'Bearer ' + authStore.user.token
+                    },
+                    method: this.activeConsumer._id ? 'PATCH' : 'POST',
+                    url: process.env.VUE_APP_SERVER_URI + '/privateData/consumers/' + authStore.user.id,
+                    data: this.activeConsumer
+                });
+            } catch(error) {
+                alertStore.error('Serverfehler beim Speichern der Änderungen! ' + error);
+            }
+
+            // If the changes have been made successfully, copy the new version into the consumers array
+            if(response && response.status == 200) {
+                // If this is an update, remove the old record
+                if(this.activeConsumer._id) {
+                    this.consumers = this.consumers.filter((elem) => elem._id != response.data._id);
+                }
+                this.consumers.push(response.data);
+            }
         }
     }
 });
