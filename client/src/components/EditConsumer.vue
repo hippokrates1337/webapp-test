@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="submit">Abschicken</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="submit" :disabled="!ready">Abschicken</button>
                 </div>
             </div>
         </div>
@@ -65,9 +65,17 @@
 </template>
 
 <script setup>
+    import { computed } from 'vue';
     import { useConsumerStore } from '@/stores/consumerStore';
 
     const consumerStore = useConsumerStore();
+    const ready = computed(() => {
+        if(consumerStore.activeConsumer.name && consumerStore.activeConsumer.name != '') {
+            return true;
+        } else {
+            return false;
+        }
+    });
 
     const submit = async () => {
         await consumerStore.saveChanges();

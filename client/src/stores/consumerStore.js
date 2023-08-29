@@ -53,7 +53,7 @@ export const useConsumerStore = defineStore('consumers', {
             }
         },
         beginEdit(id) {
-            if(id) {
+            if(id && this.consumers) {
                 this.activeConsumer = { ...this.consumers.filter((elem) => elem._id == id)[0]};
             } else {
                 this.activeConsumer = {
@@ -108,8 +108,24 @@ export const useConsumerStore = defineStore('consumers', {
                 if(this.activeConsumer._id) {
                     this.consumers = this.consumers.filter((elem) => elem._id != response.data._id);
                 }
+
                 this.consumers.push(response.data);
+
+                this.consumers.sort((a, b) => {
+                    if(new Date(a.createdOn) < new Date(b.createdOn)) {
+                        return -1
+                    } else {
+                        return 1;
+                    }
+                });
             }
+        },
+        getNameByID(id) {
+            if(this.consumers) {
+                return this.consumers.filter((elem) => elem._id == id)[0].name
+            }
+            
+            return '';
         }
     }
 });
