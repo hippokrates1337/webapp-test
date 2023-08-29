@@ -1,5 +1,5 @@
 <template>
-    <div class="modal" tabindex="-1" id="cookieconsent">
+    <div class="modal fade" tabindex="-1" id="cookieconsent">
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
@@ -20,20 +20,14 @@
 <script setup>
     import { useAlertStore } from '@/stores/alertStore';
     import { useAuthStore } from '@/stores/authStore';
-    import * as bootstrap from 'bootstrap';
+    import { router } from '@/router'
 
     const authStore = useAuthStore();
     const alertStore = useAlertStore();
 
-    window.onload = () => {
-        if(!authStore.cookieConsent) {
-            const modal = new bootstrap.Modal('#cookieconsent');
-            modal.show();
-        }   
-    }
-
     const consent = () => {
         authStore.cookieConsent = true;
         alertStore.clear();
+        router.push('/');
     }
 </script>

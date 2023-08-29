@@ -7,7 +7,7 @@ export const useResourceStore = defineStore('resources', {
         resources: null
     }),
     actions: {
-        async loadResources(forceUpdate) {
+        async load(forceUpdate) {
             let response; 
 
             if(this.resources && !forceUpdate) {
