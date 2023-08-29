@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { Consumer, ConsumerTimeSeries } from '../database/models.js';
+import { Consumer, ConsumerTimeSeries, Datapoint } from '../database/models.js';
 
 const route = express();
 
@@ -24,18 +24,18 @@ const authenticateToken = (req, res, next) => {
 
 route.get('/timeSeries/:id', authenticateToken, async (req, res) => {
     console.log('PrivateData.js - Received request for consumer-level time series');
+    let timeseries;
 
     if(res.status == 401) {
         res.send('Access denied - No bearer token presented!');
     } else if(res.status == 403) {
         res.send('Access denied - Invalid bearer token!');
     } else {
-        let response;
         try {
             const consumers = await Consumer.find({
                 user: req.params.id
             }).exec();
-            response = await ConsumerTimeSeries.find({
+            timeseries = await ConsumerTimeSeries.find({
                 consumer: {
                     '$in': consumers.map((elem) => elem._id)
                 }
@@ -45,8 +45,8 @@ route.get('/timeSeries/:id', authenticateToken, async (req, res) => {
             res.status(500).send('Error accessing the database!' + error);
         }
 
-        if(response) {
-            res.status(200).json(response);
+        if(timeseries) {
+            res.status(200).json(timeseries);
         }
     }
 });
@@ -133,6 +133,35 @@ route.post('/consumers/:id', authenticateToken, async (req, res) => {
 
         if(consumer) {
             res.status(200).json(consumer);
+        }
+    }
+});
+
+route.get('/datapoints/:id', authenticateToken, async (req, res) => {
+    console.log('PrivateData.js - Received request for user data points');
+    let datapoints;
+
+    if(res.status == 401) {
+        res.send('Access denied - No bearer token presented!');
+    } else if(res.status == 403) {
+        res.send('Access denied - Invalid bearer token!');
+    } else {
+        try {
+            const consumers = await Consumer.find({
+                user: req.params.id
+            }).exec();
+            datapoints = await Datapoint.find({
+                consumer: {
+                    '$in': consumers.map((elem) => elem._id)
+                }
+            }).exec();
+        } catch(error) {
+            console.error(error);
+            res.status(500).send('Error accessing the database!' + error);
+        }
+
+        if(datapoints) {
+            res.status(200).json(datapoints);
         }
     }
 });

@@ -14,6 +14,7 @@
                     <ul class="dropdown-menu">
                         <li><router-link to="/user" class="nav-item nav-link">Übersicht</router-link></li>
                         <li><router-link to="/user/consumers" class="nav-item nav-link">Verbraucher verwalten</router-link></li>
+                        <li><router-link to="/user/datapoints" class="nav-item nav-link">Messwerte verwalten</router-link></li>
                     </ul>
                 </div>
                 <router-link v-show="!authStore.user" to="/account/login" class="nav-item nav-link">Anmelden</router-link>

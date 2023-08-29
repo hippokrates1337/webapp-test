@@ -110,6 +110,13 @@ export const useConsumerStore = defineStore('consumers', {
                 }
                 this.consumers.push(response.data);
             }
+        },
+        getNameByID(id) {
+            if(this.consumers) {
+                return this.consumers.filter((elem) => elem._id == id)[0].name
+            }
+            
+            return '';
         }
     }
 });
