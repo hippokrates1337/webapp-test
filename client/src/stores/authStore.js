@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
         // If user is redirected to login from another page, that page's URL will be stored here
         returnURL: null,
         // Stores cookie consent information
-        cookieConsent: false
+        cookieConsent: JSON.parse(localStorage.getItem('cookieConsent'))
     }),
     actions: {
         async register(username, email, password) {
@@ -58,6 +58,10 @@ export const useAuthStore = defineStore('auth', {
             this.user = null,
             localStorage.removeItem('user');
             router.push('/account/login');
+        },
+        consentToCookies() {
+            this.cookieConsent = true;
+            localStorage.setItem('cookieConsent', true);
         }
     }
 });

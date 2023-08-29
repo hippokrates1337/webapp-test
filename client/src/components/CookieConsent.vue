@@ -25,7 +25,7 @@
     const alertStore = useAlertStore();
 
     const consent = () => {
-        authStore.cookieConsent = true;
+        authStore.consentToCookies();
         alertStore.clear();
     }
 </script>
