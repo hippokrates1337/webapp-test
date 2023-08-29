@@ -80,7 +80,6 @@ export const useDatapointStore = defineStore('datapoints', {
             let response;
 
             try {
-                // This is an update
                 response = await axios.request({
                     headers: {
                         'Authorization': 'Bearer ' + authStore.user.token
@@ -112,6 +111,39 @@ export const useDatapointStore = defineStore('datapoints', {
                         return 1;
                     }
                 });
+            }
+        },
+        async delete(id) {
+            const authStore = useAuthStore();
+            const alertStore = useAlertStore();
+            let response;
+
+            try {
+                response = await axios.request({
+                    headers: {
+                        'Authorization': 'Bearer ' + authStore.user.token
+                    },
+                    method: 'DELETE',
+                    url: process.env.VUE_APP_SERVER_URI + '/privateData/datapoints/' + authStore.user.id,
+                    data: { id }
+                });
+            } catch(error) {
+                alertStore.error('Serverfehler beim Speichern der Änderungen! ' + error);
+            }
+
+            // If the changes have been made successfully, remove the datapoint
+            if(response && response.status == 200) {
+                this.datapoints = this.datapoints.filter((elem) => elem._id != id);
+                if(this.activeDatapoint._id == id) {
+                    this.activeDatapoint = {
+                        consumer: '',
+                        type: '',
+                        resource: '',
+                        value: '',
+                        startDate: null,
+                        endDate: null
+                    };
+                }
             }
         }
     }

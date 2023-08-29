@@ -226,4 +226,26 @@ route.post('/datapoints/:id', authenticateToken, async (req, res) => {
     }
 });
 
+route.delete('/datapoints/:id', authenticateToken, async (req, res) => {
+    console.log('PrivateData.js - Received request to delete an existing datapoint');
+
+    if(res.status == 401) {
+        res.send('Access denied - No bearer token presented!');
+    } else if(res.status == 403) {
+        res.send('Access denied - Invalid bearer token!');
+    } else {
+        try {
+            await Datapoint.findOneAndDelete(
+                {
+                    _id: req.body.id
+                }).exec();
+        } catch(error) {
+            console.error(error);
+            res.status(500).send('Error accessing the database!' + error);
+        }
+
+        res.status(200).send('Successfully deleted!');
+    }
+});
+
 export default route;

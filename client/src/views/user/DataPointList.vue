@@ -21,7 +21,7 @@
                                     Wert: {{ datapoint.value }}
                                 </div>
                                 <button class="btn btn-sm" @click="showEditDialog(datapoint._id)"><i class="bi bi-pencil"></i></button>
-                                <button class="btn btn-sm"><i class="bi bi-trash3 text-danger"></i></button>
+                                <button class="btn btn-sm" @click="deleteDatapoint(datapoint._id)"><i class="bi bi-trash3 text-danger"></i></button>
                             </li>
                         </ol>
                     </div>
@@ -62,4 +62,8 @@
         const modal = bootstrap.Modal.getOrCreateInstance('#editdatapoint');
         modal.show();
     };
+
+    const deleteDatapoint = async (id) => {
+        await datapointStore.delete(id);
+    }
 </script>
