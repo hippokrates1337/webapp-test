@@ -166,4 +166,64 @@ route.get('/datapoints/:id', authenticateToken, async (req, res) => {
     }
 });
 
+route.patch('/datapoints/:id', authenticateToken, async (req, res) => {
+    console.log('PrivateData.js - Received request to update an existing datapoint');
+    let datapoint;
+
+    if(res.status == 401) {
+        res.send('Access denied - No bearer token presented!');
+    } else if(res.status == 403) {
+        res.send('Access denied - Invalid bearer token!');
+    } else {
+        try {
+            datapoint = await Datapoint.findOneAndUpdate(
+                {
+                    _id: req.body._id
+                }, 
+                {
+                    ...req.body,
+                    lastUpdate: new Date()
+                }, 
+                {
+                    new: true
+                }).exec();
+        } catch(error) {
+            console.error(error);
+            res.status(500).send('Error accessing the database!' + error);
+        }
+
+        if(datapoint) {
+            res.status(200).json(datapoint);
+        }
+    }
+});
+
+route.post('/datapoints/:id', authenticateToken, async (req, res) => {
+    console.log('PrivateData.js - Received request to create a new datapoint');
+    let datapoint;
+
+    if(res.status == 401) {
+        res.send('Access denied - No bearer token presented!');
+    } else if(res.status == 403) {
+        res.send('Access denied - Invalid bearer token!');
+    } else {
+        try {
+            datapoint = new Datapoint({
+                ... req.body,
+                createdOn: new Date(),
+                lastUpdate: new Date()
+            });
+
+            datapoint = await datapoint.save();
+        } catch(error) {
+            console.error(error);
+            res.status(500).send('Error accessing the database!' + error);
+        }
+
+        if(datapoint) {
+            res.status(200).json(datapoint);
+        }
+    }
+});
+
 export default route;

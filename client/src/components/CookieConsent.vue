@@ -20,7 +20,6 @@
 <script setup>
     import { useAlertStore } from '@/stores/alertStore';
     import { useAuthStore } from '@/stores/authStore';
-    import { router } from '@/router'
 
     const authStore = useAuthStore();
     const alertStore = useAlertStore();
@@ -28,6 +27,5 @@
     const consent = () => {
         authStore.cookieConsent = true;
         alertStore.clear();
-        router.push('/');
     }
 </script>

@@ -113,6 +113,14 @@ const DatapointSchema = new mongoose.Schema({
     endDate: {
         type: Date,
         required: true
+    },
+    createdOn: {
+        type: Date,
+        required: false
+    },
+    lastUpdate: {
+        type: Date,
+        required: false
     }
 });
 
