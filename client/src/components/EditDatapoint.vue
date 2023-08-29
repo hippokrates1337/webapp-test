@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="submit">Abschicken</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="submit" :disabled="!ready">Abschicken</button>
                 </div>
             </div>
         </div>
@@ -52,6 +52,7 @@
 </template>
 
 <script setup>
+    import { computed } from 'vue';
     import { useDatapointStore } from '@/stores/datapointStore';
     import { useConsumerStore } from '@/stores/consumerStore';
     import { useResourceStore } from '@/stores/resourceStore';
@@ -59,6 +60,19 @@
     const datapointStore = useDatapointStore();
     const consumerStore = useConsumerStore();
     const resourceStore = useResourceStore();
+    
+    // Check whether form is ready to submit
+    const ready = computed(() => {
+        if(datapointStore.activeDatapoint.consumer
+        && datapointStore.activeDatapoint.type
+        && datapointStore.activeDatapoint.resource
+        && datapointStore.activeDatapoint.value
+        && datapointStore.activeDatapoint.endDate) {
+            return true;
+        }
+
+        return false;
+    });
 
     const submit = async () => {
         await datapointStore.saveChanges();
