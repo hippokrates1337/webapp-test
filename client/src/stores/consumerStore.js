@@ -10,13 +10,20 @@ export const useConsumerStore = defineStore('consumers', {
             name: '',
             type: '',
             sqm: null,
-            coldWaterOnly: null,
+            coldWaterOnly: false,
             adults: null,
             children: null,
-            garden: null,
+            garden: false,
             zipcode: ''
         },
-        editingStage: 'inactive'
+        editingStage: 'inactive',
+        typeMapping: {
+            'detached house': 'Einfamilienhaus',
+            'semi-detached house': 'Doppelhaushälfte',
+            'apartment': 'Wohnung',
+            'garden': 'Gartengrundstück',
+            'other': 'Andere'
+        }
     }),
     actions: {
         async load(forceUpdate) {
@@ -53,10 +60,10 @@ export const useConsumerStore = defineStore('consumers', {
                     name: '',
                     type: '',
                     sqm: null,
-                    coldWaterOnly: null,
+                    coldWaterOnly: false,
                     adults: null,
                     children: null,
-                    garden: null,
+                    garden: false,
                     zipcode: ''
                 };
             }
@@ -68,10 +75,10 @@ export const useConsumerStore = defineStore('consumers', {
                 name: '',
                 type: '',
                 sqm: null,
-                coldWaterOnly: null,
+                coldWaterOnly: false,
                 adults: null,
                 children: null,
-                garden: null,
+                garden: false,
                 zipcode: ''
             };
             this.editingStage = 'inactive';

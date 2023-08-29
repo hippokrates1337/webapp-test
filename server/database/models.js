@@ -70,6 +70,14 @@ const ConsumerSchema = new mongoose.Schema({
     zipcode: {
         type: Number,
         required: false
+    },
+    createdOn: {
+        type: Date,
+        required: false,
+    },
+    lastUpdate: {
+        type: Date,
+        required: false
     }
 });
 
