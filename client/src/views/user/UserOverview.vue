@@ -65,13 +65,12 @@
                 url: process.env.VUE_APP_SERVER_URI + '/privateData/timeSeries/' + authStore.user.id
             });
         } catch(error) {
-            alertStore.error('Serverfehler beim Abrufen der Daten!' + error)
+            alertStore.error('Serverfehler beim Abrufen der Daten! ' + error)
         }
         
         if(response && response.status == 200) {
             userData = response.data;
+            render.value = true;
         }
-
-        render.value = true;
     });
 </script>
