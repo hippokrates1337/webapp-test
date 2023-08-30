@@ -8,11 +8,20 @@
             </div>
             <span class="badge bg-primary rounded-pill mt-1">#</span>
             <button class="btn btn-sm" @click="showEditDialog(consumer._id)"><i class="bi bi-pencil"></i></button>
-            <button class="btn btn-sm"><i class="bi bi-trash3 text-danger"></i></button>
+            <button class="btn btn-sm" @click="showDeleteDialog(consumer._id)"><i class="bi bi-trash3 text-danger"></i></button>
         </li>
     </ol>
     <button class="btn btn-primary" @click="showEditDialog(null)">Verbraucher hinzufügen</button>
     <EditConsumer />
+    <ConfirmDialog :callback="deleteConsumer">
+        <template v-slot:title>
+            Verbraucher löschen
+        </template>
+        <template v-slot:body>
+            Bitte bestätige, dass Du den Verbraucher wirklich löschen möchtest. Alle mit ihm verbundenen
+            Messwerte werden dann ebenfalls gelöscht.
+        </template>    
+    </ConfirmDialog>
 </template>
 
 <script setup>
@@ -20,6 +29,7 @@
     import * as bootstrap from 'bootstrap';
     import { useConsumerStore } from '@/stores/consumerStore.js';
     import EditConsumer from '@/components/EditConsumer.vue';
+    import ConfirmDialog from '@/components/ConfirmDialog.vue';
 
     const consumerStore = useConsumerStore();
 
@@ -33,5 +43,16 @@
 
         const modal = bootstrap.Modal.getOrCreateInstance('#editconsumer');
         modal.show();
+    };
+
+    const showDeleteDialog = (consumer) => {
+        consumerStore.consumerToDelete = consumer;
+
+        const modal = bootstrap.Modal.getOrCreateInstance('#confirmdialog');
+        modal.show();
+    }
+
+    const deleteConsumer = async () => {
+        await consumerStore.delete();
     };
 </script>
