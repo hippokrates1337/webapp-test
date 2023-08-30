@@ -46,12 +46,13 @@
     };
 
     const showDeleteDialog = (consumer) => {
-        console.log(consumer);
+        consumerStore.consumerToDelete = consumer;
+
         const modal = bootstrap.Modal.getOrCreateInstance('#confirmdialog');
         modal.show();
     }
 
-    const deleteConsumer = () => {
-        console.log('Deleted');
+    const deleteConsumer = async () => {
+        await consumerStore.delete();
     };
 </script>

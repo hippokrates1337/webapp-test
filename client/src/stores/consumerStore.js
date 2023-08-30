@@ -17,6 +17,7 @@ export const useConsumerStore = defineStore('consumers', {
             zipcode: ''
         },
         editingStage: 'inactive',
+        consumerToDelete: '',
         typeMapping: {
             'detached house': 'Einfamilienhaus',
             'semi-detached house': 'Doppelhaushälfte',
@@ -126,6 +127,45 @@ export const useConsumerStore = defineStore('consumers', {
             }
             
             return '';
+        },
+        async delete() {
+            if(this.consumerToDelete != '') {
+                const authStore = useAuthStore();
+                const alertStore = useAlertStore();
+                let response;
+
+                try {
+                    response = await axios.request({
+                        headers: {
+                            'Authorization': 'Bearer ' + authStore.user.token
+                        },
+                        method: 'DELETE',
+                        url: process.env.VUE_APP_SERVER_URI + '/privateData/consumers/' + authStore.user.id,
+                        data: { id: this.consumerToDelete }
+                    });
+                } catch(error) {
+                    alertStore.error('Serverfehler beim Speichern der Änderungen! ' + error);
+                }
+
+                // If the changes have been made successfully, remove the datapoint
+                if(response && response.status == 200) {
+                    this.consumers = this.consumers.filter((elem) => elem._id != this.consumerToDelete);
+                    if(this.activeConsumer._id == this.consumerToDelete) {
+                        this.activeConsumer = {
+                            name: '',
+                            type: '',
+                            sqm: null,
+                            coldWaterOnly: false,
+                            adults: null,
+                            children: null,
+                            garden: false,
+                            zipcode: ''
+                        };
+                    }
+                }
+
+                this.consumerToDelete = '';
+            }
         }
     }
 });

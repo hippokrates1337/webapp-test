@@ -107,6 +107,23 @@ route.post('/consumers/:id', authenticateToken, async (req, res) => {
     });
 });
 
+route.delete('/consumers/:id', authenticateToken, async (req, res) => {
+    console.log('PrivateData.js - Received request to delete a consumer');
+
+    await executeOperation(req, res, async () => {
+        await Consumer.findOneAndDelete({
+            _id: req.body.id
+        });
+
+        // Delete all datapoints associated with this consumer
+        await Datapoint.deleteMany({
+            consumer: req.body.id
+        });
+
+        return {message: 'Successfully deleted!'};
+    });
+});
+
 route.get('/datapoints/:id', authenticateToken, async (req, res) => {
     console.log('PrivateData.js - Received request for user data points');
     
