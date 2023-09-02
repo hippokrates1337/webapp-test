@@ -40,6 +40,7 @@ route.post('/login', async (req, res) => {
             res.status(200).json({
                 name: response.name,
                 id: response._id,
+                email: response.email,
                 // Send back a JSON webt token without expiry date
                 token: jwt.sign(response.name, process.env.TOKEN_SECRET, {})
             });
@@ -100,6 +101,45 @@ route.post('/register', async (req, res) => {
         console.error(error);
     }
     
+});
+
+route.post('/changepwd', async (req, res) => {
+    console.log('Account.js - Received request to change password from user ' + req.body.id);
+
+    let user;
+    try {
+        // Assumes every user name is unique
+        user = await User.findOne({
+            _id: req.body.id
+        }).exec();
+    } catch(error) {
+        console.error(error);
+        res.status(500).send('Internal database error!');
+    }
+
+    if(!user) {
+        console.log('User ' + req.body.id + ' not found!');
+        res.status(404).send('Could not find user in database!');
+    } else {
+        const match = await bcrypt.compare(req.body.oldPwd, user.password);
+        if(match) {
+            // Store new password
+            let pwdhash = await bcrypt.hash(req.body.newPwd, 10);
+
+            try {
+                user.password = pwdhash;
+                await user.save();
+            } catch(error) {
+                console.error(error);
+                res.status(500).send('Internal database error!');
+            }
+
+            // Nothing to send back upon success
+            res.status(200).end();
+        } else {
+            res.status(401).send('Password does not match!');
+        }
+    } 
 });
 
 export default route;

@@ -55,13 +55,39 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         logout() {
+            router.push('/account/login');
             this.user = null,
             localStorage.removeItem('user');
-            router.push('/account/login');
         },
         consentToCookies() {
             this.cookieConsent = true;
             localStorage.setItem('cookieConsent', true);
+        },
+        async changePwd(oldPwd, newPwd) {
+            let response;
+            try {
+                response = await axios.post(process.env.VUE_APP_SERVER_URI + '/account/changepwd', {
+                    id: this.user.id,
+                    newPwd: newPwd,
+                    oldPwd: oldPwd
+                });
+
+                if(response.status == 200) {
+                    return {
+                        status: 'success'
+                    };
+                } else {
+                    return {
+                        status: 'failure',
+                        message: response
+                    };
+                }                
+            } catch(error) {
+                return {
+                    status: 'failure',
+                    message: error.response.data
+                }
+            }
         }
     }
 });

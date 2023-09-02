@@ -10,9 +10,10 @@
                 </div>
                 <div class="modal-body">
                     <slot name="body"></slot>
+                    <p class="text-danger">{{ props.message }}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="props.callback">Bestätigen</button>
+                    <button type="button" class="btn btn-primary" @click="props.callback">Bestätigen</button>
                 </div>
             </div>
         </div>
@@ -23,6 +24,7 @@
     import { defineProps } from 'vue';
 
     const props = defineProps({
-        callback: Function
+        callback: Function,
+        message: String
     });
 </script>

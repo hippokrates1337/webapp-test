@@ -54,5 +54,8 @@
 
     const deleteConsumer = async () => {
         await consumerStore.delete();
+
+        const modal = bootstrap.Modal.getOrCreateInstance('#confirmdialog');
+        modal.hide();
     };
 </script>

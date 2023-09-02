@@ -19,6 +19,7 @@
                 </div>
                 <router-link v-show="!authStore.user" to="/account/login" class="nav-item nav-link">Anmelden</router-link>
                 <router-link v-show="!authStore.user" to="/account/register" class="nav-item nav-link">Registrieren</router-link>
+                <router-link v-show="authStore.user" to="/account/settings" class="nav-item nav-link">Mein Konto</router-link>
                 <button v-show="authStore.user" @click="authStore.logout()" class="btn btn-link nav-item nav-link">Abmelden</button>
             </div>
         </div>
