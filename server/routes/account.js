@@ -2,8 +2,11 @@ import express from 'express';
 import { User } from '../database/models.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import sgMail from '@sendgrid/mail';
 
 const route = express();
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 route.post('/login', async (req, res) => {
     console.log('Account.js - Received login request from user ' + req.body.user);
@@ -71,7 +74,9 @@ route.post('/register', async (req, res) => {
             lastLogin: new Date()
         });
 
+        // Save user in database
         response = await user.save();
+
         res.status(200).json({
             name: response.name,
             id: response._id,
@@ -82,6 +87,19 @@ route.post('/register', async (req, res) => {
         console.error(error);
         res.status(500).send('Internal database error!');
     }
+
+    // Send confirmation email (if this fails, the user should still be registered and get a conformation back, hence the separate try/catch block)
+    try {        
+        await sgMail.send({
+            to: req.body.email,
+            from: process.env.EMAIL_FROM,
+            subject: 'Verbrauchsvergleich Registrierungsbestätigung',
+            html: '<p>Liebe(r) ' + req.body.user + ', <br><br> Du hast Dich erfolgreich bei Verbrauchsvergleich angemeldet. <br><br> Dein Benutzername ist: ' + req.body.user + ' <br><br> Viel Spaß auf der Plattform!</p>'
+        });
+    } catch(error) {
+        console.error(error);
+    }
+    
 });
 
 export default route;

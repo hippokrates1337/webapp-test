@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/hippokrates1337/webapp-test#readme",
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
