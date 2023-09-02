@@ -142,4 +142,41 @@ route.post('/changepwd', async (req, res) => {
     } 
 });
 
+route.post('/changeemail', async (req, res) => {
+    console.log('Account.js - Received request to change email from user ' + req.body.id);
+
+    let user;
+    try {
+        // Assumes every user name is unique
+        user = await User.findOne({
+            _id: req.body.id
+        }).exec();
+    } catch(error) {
+        console.error(error);
+        res.status(500).send('Internal database error!');
+    }
+
+    if(!user) {
+        console.log('User ' + req.body.id + ' not found!');
+        res.status(404).send('Could not find user in database!');
+    } else {
+        const match = await bcrypt.compare(req.body.password, user.password);
+        if(match) {
+            // Store new email
+            try {
+                user.email = req.body.email;
+                await user.save();
+            } catch(error) {
+                console.error(error);
+                res.status(500).send('Internal database error!');
+            }
+
+            // Nothing to send back upon success
+            res.status(200).end();
+        } else {
+            res.status(401).send('Password does not match!');
+        }
+    } 
+});
+
 export default route;

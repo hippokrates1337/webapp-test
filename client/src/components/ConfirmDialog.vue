@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" tabindex="-1" id="confirmdialog">
+    <div class="modal fade" tabindex="-1" :id="props.id">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -25,6 +25,7 @@
 
     const props = defineProps({
         callback: Function,
-        message: String
+        message: String,
+        id: String
     });
 </script>

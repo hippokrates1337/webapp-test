@@ -88,6 +88,33 @@ export const useAuthStore = defineStore('auth', {
                     message: error.response.data
                 }
             }
+        },
+        async changeEmail(password, email) {
+            let response;
+            try {
+                response = await axios.post(process.env.VUE_APP_SERVER_URI + '/account/changeemail', {
+                    id: this.user.id,
+                    password: password,
+                    email: email
+                });
+
+                if(response.status == 200) {
+                    this.user.email = email;
+                    return {
+                        status: 'success'
+                    };
+                } else {
+                    return {
+                        status: 'failure',
+                        message: response
+                    };
+                }                
+            } catch(error) {
+                return {
+                    status: 'failure',
+                    message: error.response.data
+                }
+            }
         }
     }
 });
