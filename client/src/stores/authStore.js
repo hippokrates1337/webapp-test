@@ -63,43 +63,21 @@ export const useAuthStore = defineStore('auth', {
             this.cookieConsent = true;
             localStorage.setItem('cookieConsent', true);
         },
-        async changePwd(oldPwd, newPwd) {
-            let response;
+        async changeAttribute(change) {
+            let response, body;
             try {
-                response = await axios.post(process.env.VUE_APP_SERVER_URI + '/account/changepwd', {
+                body = {
                     id: this.user.id,
-                    newPwd: newPwd,
-                    oldPwd: oldPwd
-                });
-
-                if(response.status == 200) {
-                    return {
-                        status: 'success'
-                    };
-                } else {
-                    return {
-                        status: 'failure',
-                        message: response
-                    };
-                }                
-            } catch(error) {
-                return {
-                    status: 'failure',
-                    message: error.response.data
+                    pwd: change.pwd,
+                    attribute: change.attribute
                 }
-            }
-        },
-        async changeEmail(password, email) {
-            let response;
-            try {
-                response = await axios.post(process.env.VUE_APP_SERVER_URI + '/account/changeemail', {
-                    id: this.user.id,
-                    password: password,
-                    email: email
-                });
+                body[change.attribute] = change[change.attribute];
+
+                response = await axios.post(process.env.VUE_APP_SERVER_URI + '/account/changeattribute', body);
 
                 if(response.status == 200) {
-                    this.user.email = email;
+                    if(change.attribute != 'password') this.user[change.attribute] = change[change.attribute];
+
                     return {
                         status: 'success'
                     };

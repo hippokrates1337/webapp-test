@@ -11,12 +11,12 @@
                         <tr>
                             <td>E-Mail: </td>
                             <td>{{ authStore.user ? authStore.user.email : '' }}</td>
-                            <td><button class="btn btn-sm" @click="showEmailDialog"><i class="bi bi-pencil"></i></button></td>
+                            <td><button class="btn btn-sm" @click="showDialog('email')"><i class="bi bi-pencil"></i></button></td>
                         </tr>
                         <tr>
                             <td>Passwort: </td>
                             <td>**********</td>
-                            <td><button class="btn btn-sm" @click="showPwdDialog"><i class="bi bi-pencil"></i></button></td>
+                            <td><button class="btn btn-sm" @click="showDialog('password')"><i class="bi bi-pencil"></i></button></td>
                         </tr>
                         <tr>
                             <td>Hinterlegte Verbraucher: </td>
@@ -33,41 +33,41 @@
         </div>
     </div>
 
-    <ConfirmDialog :callback="changeEmail" :message="errorMsg" id="changeemail">
+    <ConfirmDialog :callback="changeAttribute" :message="errorMsg" id="dialogemail">
         <template v-slot:title>
             E-Mail-Adresse ändern
         </template>
         <template v-slot:body>
             <div class="form-floating mb-2">
-                <input v-model="oldPwd" id="passwordOld" type="password" class="form-control" placeholder="XXX" required />
-                <label for="passwordOld" class="form-label">Passwort</label>
+                <input v-model="password" id="pwdEmail" type="password" class="form-control" placeholder="XXX" required />
+                <label for="pwdEmail" class="form-label">Passwort</label>
             </div>
             <div class="form-floating mb-2">
-                <input v-model="email" id="email" type="email" class="form-control" placeholder="Jjdoe@example.com" required />
+                <input v-model="newValue" id="email" type="email" class="form-control" placeholder="Jjdoe@example.com" required />
                 <label for="email" class="form-label">E-Mail</label>
             </div>
             <div class="form-floating mb-2">
-                <input v-model="emailRepeat" id="emailRepeat" type="email" class="form-control" placeholder="Jjdoe@example.com" required />
+                <input v-model="newValueRepeat" id="emailRepeat" type="email" class="form-control" placeholder="Jjdoe@example.com" required />
                 <label for="emailRepeat" class="form-label">E-Mail wiederholen</label>
             </div>
         </template>    
     </ConfirmDialog>
 
-    <ConfirmDialog :callback="changePassword" :message="errorMsg" id="changepassword">
+    <ConfirmDialog :callback="changeAttribute" :message="errorMsg" id="dialogpassword">
         <template v-slot:title>
             Passwort ändern
         </template>
         <template v-slot:body>
             <div class="form-floating mb-2">
-                <input v-model="oldPwd" id="passwordOld" type="password" class="form-control" placeholder="XXX" required />
-                <label for="passwordOld" class="form-label">Altes Passwort</label>
+                <input v-model="password" id="pwdPassword" type="password" class="form-control" placeholder="XXX" required />
+                <label for="pwdPassword" class="form-label">Altes Passwort</label>
             </div>
             <div class="form-floating mb-2">
-                <input v-model="newPwd" id="password" type="password" class="form-control" placeholder="XXX" required />
+                <input v-model="newValue" id="password" type="password" class="form-control" placeholder="XXX" required />
                 <label for="password" class="form-label">Neues Passwort</label>
             </div>
             <div class="form-floating mb-2">
-                <input v-model="newPwdRepeat" id="passwordRepeat" type="password" class="form-control" placeholder="XXX" required />
+                <input v-model="newValueRepeat" id="passwordRepeat" type="password" class="form-control" placeholder="XXX" required />
                 <label for="passwordRepeat" class="form-label">Neues Passwort wiederholen</label>
             </div>
         </template>    
@@ -85,12 +85,11 @@
     const authStore = useAuthStore();
     const consumerStore = useConsumerStore();
     const datapointStore = useDatapointStore();
-    const oldPwd = ref('');
-    const newPwd = ref('');
-    const newPwdRepeat = ref('');
+    const password = ref('');
+    const newValue = ref('');
+    const newValueRepeat = ref('');
     const errorMsg = ref('');
-    const email = ref('');
-    const emailRepeat = ref('');
+    const attributeToChange = ref('');
 
     onMounted(async () => {
         // Ensure data is loaded (but do not force an update)
@@ -98,53 +97,46 @@
         await datapointStore.load(false);
     });
 
-    const showEmailDialog = () => {
-        const modal = bootstrap.Modal.getOrCreateInstance('#changeemail');
+    const showDialog = (attribute) => {
+        attributeToChange.value = attribute;
+
+        const modal = bootstrap.Modal.getOrCreateInstance('#dialog' + attribute);
         modal.show();
+
+        const modalEl = document.getElementById('dialog' + attribute);
+        modalEl.addEventListener('hidden.bs.modal', () => {
+            password.value = '';
+            newValue.value = '';
+            newValueRepeat.value = '';
+            errorMsg.value = '';
+        });
     };
 
-    const changeEmail = async () => {
+    const changeAttribute = async () => {
+        let change = {}
         errorMsg.value = '';
 
-        if(oldPwd.value == '') {
+        if(password.value == '') {
             errorMsg.value = 'Bitte Password eingeben';
-        }
-
-        if(email.value != emailRepeat.value) {
-            errorMsg.value = 'Die E-Mail-Adressen stimmen nicht überein!';
-        }
-
-        const response = await authStore.changeEmail(oldPwd.value, email.value);
-        if(response.status == 'failure') {
-            errorMsg.value = response.message;
+        } else if(newValue.value != newValueRepeat.value) {
+            errorMsg.value = 'Die neuen Werte stimmen nicht überein!';
         } else {
-            const modal = bootstrap.Modal.getOrCreateInstance('#changeemail');
-            modal.hide();
-        }
-    };
+            change['attribute'] = attributeToChange.value;
+            change[attributeToChange.value] = newValue.value;
+            change['pwd'] = password.value;
 
-    const showPwdDialog = () => {
-        const modal = bootstrap.Modal.getOrCreateInstance('#changepassword');
-        modal.show();
-    };
+            const response = await authStore.changeAttribute(change);
+            if(response.status == 'failure') {
+                errorMsg.value = response.message;
+            } else {
+                const modal = bootstrap.Modal.getOrCreateInstance('#dialog' + attributeToChange.value);
+                modal.hide();
 
-    const changePassword = async () => {
-        errorMsg.value = '';
-
-        if(oldPwd.value == '') {
-            errorMsg.value = 'Bitte das aktuelle Passwort eingeben';
-        }
-
-        if(newPwd.value != newPwdRepeat.value) {
-            errorMsg.value = 'Die Passwörter stimmen nicht überein!';
-        }
-
-        const response = await authStore.changePwd(oldPwd.value, newPwd.value);
-        if(response.status == 'failure') {
-            errorMsg.value = response.message;
-        } else {
-            const modal = bootstrap.Modal.getOrCreateInstance('#confirmdialog');
-            modal.hide();
+                password.value = '';
+                newValue.value = '';
+                newValueRepeat.value = '';
+                errorMsg.value = '';
+            }
         }
     };
 </script>
