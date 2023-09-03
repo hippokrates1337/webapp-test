@@ -133,6 +133,17 @@ const createConsumerDailyData = async (consumers) => {
     }
 };
 
+const recreateConsumerDailyData = async (consumer) => {
+    console.log('DataAggregation.js - Executing request to recreate daily consumption data for consumer ' + consumer);
+
+    // Delete existing time series for this consumer
+    await ConsumerTimeSeries.deleteMany({
+        consumer: consumer
+    }).exec();   
+
+    createConsumerDailyData([consumer]);
+};
+
 const createUserDailyData = async (user) => {
     console.log('DataAggregation.js - Executing request to create daily consumption data for user ' + user.name + '/' + user._id);
 
@@ -161,6 +172,41 @@ const recreateUserDailyData = async () => {
     }
 };
 
+const createAggregateTimeSeries = (consumerTimeSeries) => {
+    console.log('DataAggregation.js - Executing request to create an aggregate consumption time series from several consumers...');
+
+    let consumption = {};
+    let observations = {};
+    let aggregateDays = [], aggregateConsumption = [], aggregateObservations = [];
+    for(const dp of consumerTimeSeries) {
+        for(let i = 0; i < dp.days.length; i++) {
+            if(dp.days[i] in consumption) {
+                consumption[dp.days[i]] += dp.consumption[i];
+                observations[dp.days[i]] += 1;
+            } else {
+                consumption[dp.days[i]] = dp.consumption[i];
+                observations[dp.days[i]] = 1;
+            }
+        }
+    }
+
+    const order = Object.keys(consumption).sort((a, b) => {
+        return new Date(a).getTime() > new Date(b).getTime() ? 1 : -1;
+    });
+    
+    for(const d of order) {
+        aggregateDays.push(d);
+        aggregateConsumption.push(consumption[d]);
+        aggregateObservations.push(observations[d]);
+    }
+
+    return {
+        days: aggregateDays,
+        consumption: aggregateConsumption,
+        observations: aggregateObservations
+    }
+};
+
 const recreateAggregateTimeSeries = async () => {
     console.log('DataAggregation.js - Executing request to recreate the aggregate consumption time series...');
     
@@ -178,6 +224,24 @@ const recreateAggregateTimeSeries = async () => {
             resource: resource
         }).exec();
 
+        let aggregation = createAggregateTimeSeries(data);
+
+        if(aggregation.days.length > 0) {
+            const timeSeries = AggregateTimeSeries({
+                resource: resource,
+                days: aggregation.days,
+                consumption: aggregation.consumption,
+                observations: aggregation.observations
+            });
+    
+            try {
+                await timeSeries.save();
+            } catch(err) {
+                console.error(err);
+            }
+        }
+
+        /*
         let consumption = {};
         let observations = {};
         let aggregateDays = [], aggregateConsumption = [], aggregateObservations = [];
@@ -202,6 +266,7 @@ const recreateAggregateTimeSeries = async () => {
             aggregateConsumption.push(consumption[d]);
             aggregateObservations.push(observations[d]);
         }
+        
 
         if(aggregateDays.length > 0) {
             const timeSeries = AggregateTimeSeries({
@@ -217,7 +282,8 @@ const recreateAggregateTimeSeries = async () => {
                 console.error(err);
             }
         }
+        */
     }
 };
 
-export {recreateUserDailyData, createUserDailyData, createConsumerDailyData, recreateAggregateTimeSeries};
+export {recreateUserDailyData, createUserDailyData, createConsumerDailyData, recreateConsumerDailyData, recreateAggregateTimeSeries, createAggregateTimeSeries};

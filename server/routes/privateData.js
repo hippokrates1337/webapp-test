@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { Consumer, ConsumerTimeSeries, Datapoint } from '../database/models.js';
+import { recreateConsumerDailyData } from '../api/dataAggregation.js';
 
 const route = express();
 
@@ -157,6 +158,9 @@ route.patch('/datapoints/:id', authenticateToken, async (req, res) => {
                 new: true
             }).exec();
 
+            // Recalculate time series data
+            await recreateConsumerDailyData(datapoint.consumer);
+
             return datapoint;
     });
 });
@@ -172,6 +176,10 @@ route.post('/datapoints/:id', authenticateToken, async (req, res) => {
         });
 
         datapoint = await datapoint.save();
+
+        // Recalculate time series data
+        await recreateConsumerDailyData(datapoint.consumer);
+
         return datapoint;
     });
 });

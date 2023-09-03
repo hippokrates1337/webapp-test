@@ -16,7 +16,12 @@
         <div class="tab-content p-2" id="nav-tabContent">
             <template v-for="(res, index) in resources" :key="res.id">
                 <div class="tab-pane fade" :class="{'active show' : index == 0}" :id="'nav-' + index" role="tabpanel">
-                    <LineChart :resource="resources[index]" :data="userData.filter((elem) => elem.resource == resources[index]._id)" :consumers="consumers" :aggregate="aggregate" />
+                    <LineChart 
+                    :resource="resources[index]" 
+                    :data="userData.filter((elem) => elem.resource == resources[index]._id)" 
+                    :consumers="consumers" 
+                    :aggregate="aggregate" 
+                    :benchmark="benchmarkData.filter((elem) => elem.resource == resources[index]._id)" />
                 </div>
             </template>
         </div>  
@@ -37,6 +42,7 @@
     import { storeToRefs } from 'pinia';
 
     let userData = null;
+    let benchmarkData = null;
     const render = ref(false);
     const aggregate = ref(false);
     const resourceStore = useResourceStore();
@@ -70,6 +76,28 @@
         
         if(response && response.status == 200) {
             userData = response.data;
+        }
+
+        // Load benchmark time series data
+        try {
+            response = await axios.request({
+                method: 'GET',
+                url: process.env.VUE_APP_SERVER_URI + '/publicData/benchmarkdata/'
+            });
+        } catch(error) {
+            alertStore.error('Serverfehler beim Abrufen der Daten! ' + error)
+        }
+        
+        if(response && response.status == 200) {
+            benchmarkData = response.data;
+
+            // Convert data to averages per user (the server delivers total consumption and #observations)
+            for(const series of benchmarkData) {
+                for(let i = 0; i < series.days.length; i++) {
+                    series.consumption[i] = series.consumption[i] / series.observations[i];
+                }
+            }
+
             render.value = true;
         }
     });

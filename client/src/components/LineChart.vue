@@ -13,7 +13,8 @@
       resource: Object,
       data: Object,
       consumers: Object,
-      aggregate: Boolean
+      aggregate: Boolean,
+      benchmark: Object
     });
   
     const chartKey = ref(0);
@@ -31,7 +32,7 @@
         if(!props.aggregate) {
             for(const d of props.data) {
                 series.push({
-                    name: props.consumers ? 'Täglicher Verbrauch - ' + props.consumers.filter((elem) => elem._id == d.consumer)[0].name : '',
+                    name: props.consumers ? props.consumers.filter((elem) => elem._id == d.consumer)[0].name : '',
                     data: d.consumption
                 });
             }
@@ -44,8 +45,22 @@
             }
 
             series.push({
-                name: 'Täglicher Verbrauch - Aggregiert',
+                name: 'Alle Verbraucher',
                 data: consumption
+            });
+        }
+      
+        if(props.benchmark && props.benchmark[0]) {
+            let trimLeft = Math.floor(new Date(props.benchmark[0].days[0]) 
+                            - new Date(props.data[0].days[0]))
+                            / (1000 * 60 * 60 * 24);
+            let trimRight = Math.floor(new Date(props.benchmark[0].days[props.benchmark[0].days.length - 1]) 
+                            - new Date(props.data[0].days[props.data[0].days.length - 1]))
+                            / (1000 * 60 * 60 * 24);
+
+            series.push({
+                name: 'Benchmark',
+                data: props.benchmark[0].consumption.slice(trimLeft, props.benchmark[0].consumption.length - trimRight)
             });
         }
     }
