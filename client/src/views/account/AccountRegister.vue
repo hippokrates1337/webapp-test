@@ -21,7 +21,7 @@
                 </div>
                 <div class="form-check mb-2">
                     <input class="form-check-input" type="checkbox" value="" id="termsofuse" required/>
-                    <label for="termsofuse" class="form-check-label">Mit meiner Anmeldung stimme ich den Nutzungsbestimmungen zu</label>
+                    <label for="termsofuse" class="form-check-label">Mit meiner Anmeldung stimme ich den <router-link to="/termsofuse" class="link-primary">Nutzungsbedingungen</router-link> zu</label>
                 </div>
                 <button class="btn btn-primary" type="submit">Abschicken</button>
             </form>

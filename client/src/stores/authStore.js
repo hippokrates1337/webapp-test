@@ -93,6 +93,34 @@ export const useAuthStore = defineStore('auth', {
                     message: error.response.data
                 }
             }
+        },
+        async deleteAccount(password) {
+            let response;
+            try {
+                response = await axios.delete(process.env.VUE_APP_SERVER_URI + '/account', {
+                    data: {
+                        id: this.user.id,
+                        pwd: password
+                    }
+                });
+
+                if(response.status == 200) {
+                    this.logout();
+                    return {
+                        status: 'success'
+                    };
+                } else {
+                    return {
+                        status: 'failure',
+                        message: response
+                    };
+                }                
+            } catch(error) {
+                return {
+                    status: 'failure',
+                    message: error.response.data
+                }
+            }
         }
     }
 });
