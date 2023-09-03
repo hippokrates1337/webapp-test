@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" tabindex="-1" id="confirmdialog">
+    <div class="modal fade" tabindex="-1" :id="props.id">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -10,9 +10,10 @@
                 </div>
                 <div class="modal-body">
                     <slot name="body"></slot>
+                    <p class="text-danger">{{ props.message }}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="props.callback">Bestätigen</button>
+                    <button type="button" class="btn btn-primary" @click="props.callback">Bestätigen</button>
                 </div>
             </div>
         </div>
@@ -23,6 +24,8 @@
     import { defineProps } from 'vue';
 
     const props = defineProps({
-        callback: Function
+        callback: Function,
+        message: String,
+        id: String
     });
 </script>

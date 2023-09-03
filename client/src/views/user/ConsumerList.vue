@@ -13,7 +13,7 @@
     </ol>
     <button class="btn btn-primary" @click="showEditDialog(null)">Verbraucher hinzufügen</button>
     <EditConsumer />
-    <ConfirmDialog :callback="deleteConsumer">
+    <ConfirmDialog :callback="deleteConsumer" id="confirmdialog">
         <template v-slot:title>
             Verbraucher löschen
         </template>
@@ -54,5 +54,8 @@
 
     const deleteConsumer = async () => {
         await consumerStore.delete();
+
+        const modal = bootstrap.Modal.getOrCreateInstance('#confirmdialog');
+        modal.hide();
     };
 </script>

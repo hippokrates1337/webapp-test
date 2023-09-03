@@ -55,13 +55,72 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         logout() {
+            router.push('/account/login');
             this.user = null,
             localStorage.removeItem('user');
-            router.push('/account/login');
         },
         consentToCookies() {
             this.cookieConsent = true;
             localStorage.setItem('cookieConsent', true);
+        },
+        async changeAttribute(change) {
+            let response, body;
+            try {
+                body = {
+                    id: this.user.id,
+                    pwd: change.pwd,
+                    attribute: change.attribute
+                }
+                body[change.attribute] = change[change.attribute];
+
+                response = await axios.post(process.env.VUE_APP_SERVER_URI + '/account/changeattribute', body);
+
+                if(response.status == 200) {
+                    if(change.attribute != 'password') this.user[change.attribute] = change[change.attribute];
+
+                    return {
+                        status: 'success'
+                    };
+                } else {
+                    return {
+                        status: 'failure',
+                        message: response
+                    };
+                }                
+            } catch(error) {
+                return {
+                    status: 'failure',
+                    message: error.response.data
+                }
+            }
+        },
+        async deleteAccount(password) {
+            let response;
+            try {
+                response = await axios.delete(process.env.VUE_APP_SERVER_URI + '/account', {
+                    data: {
+                        id: this.user.id,
+                        pwd: password
+                    }
+                });
+
+                if(response.status == 200) {
+                    this.logout();
+                    return {
+                        status: 'success'
+                    };
+                } else {
+                    return {
+                        status: 'failure',
+                        message: response
+                    };
+                }                
+            } catch(error) {
+                return {
+                    status: 'failure',
+                    message: error.response.data
+                }
+            }
         }
     }
 });
