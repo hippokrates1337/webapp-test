@@ -22,9 +22,16 @@
                     :consumers="consumers" 
                     :aggregate="aggregate" 
                     :benchmark="benchmarkData.filter((elem) => elem.resource == resources[index]._id)" />
+                    <div class="container">
+                        <button class="btn btn-primary btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#configureBenchmark">Benchmark konfigurieren</button>
+                        <span class="float-end">Verbraucher im Benchmark: {{ Math.max(...benchmarkData.filter((elem) => elem.resource == resources[index]._id)[0].observations) }}</span>
+                    </div>
+                    <div class="collapse" id="configureBenchmark">
+                        <ConfigureBenchmark />
+                    </div>
                 </div>
             </template>
-        </div>  
+        </div>
     </template>
     <div v-else>
         Daten werden geladen...
@@ -37,6 +44,7 @@
     import { useAuthStore } from '@/stores/authStore';
     import { useAlertStore } from '@/stores/alertStore';
     import LineChart from '@/components/LineChart.vue';
+    import ConfigureBenchmark from '@/components/ConfigureBenchmark.vue';
     import { useResourceStore } from '@/stores/resourceStore';
     import { useConsumerStore } from '@/stores/consumerStore.js';
     import { storeToRefs } from 'pinia';
