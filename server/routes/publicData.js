@@ -40,6 +40,9 @@ route.get('/resourceTypes', async (req, res) => {
 route.get('/benchmarkdata', async (req, res) => {
     console.log('PublicData.js - Received request for benchmark data...');
 
+    console.log('Params: ');
+    console.log(req.query);
+
     let sample, timeseries, resources;
     let result = [];
 

@@ -27,7 +27,7 @@
                         <span class="float-end">Verbraucher im Benchmark: {{ Math.max(...benchmarkData.filter((elem) => elem.resource == resources[index]._id)[0].observations) }}</span>
                     </div>
                     <div class="collapse" id="configureBenchmark">
-                        <ConfigureBenchmark />
+                        <ConfigureBenchmark @updateBenchmark="updateBenchmark" />
                     </div>
                 </div>
             </template>
@@ -87,10 +87,23 @@
         }
 
         // Load benchmark time series data
+        await updateBenchmark(null);
+        render.value = true;
+    });
+
+    const updateBenchmark = async (params) => {
+        console.log('Updating benchmark with params: ');
+        console.log(params);
+        
+        const alertStore = useAlertStore();
+        let response;
+
+        // Load benchmark time series data
         try {
             response = await axios.request({
                 method: 'GET',
-                url: process.env.VUE_APP_SERVER_URI + '/publicData/benchmarkdata/'
+                url: process.env.VUE_APP_SERVER_URI + '/publicData/benchmarkdata/',
+                params: params
             });
         } catch(error) {
             alertStore.error('Serverfehler beim Abrufen der Daten! ' + error)
@@ -105,8 +118,6 @@
                     series.consumption[i] = series.consumption[i] / series.observations[i];
                 }
             }
-
-            render.value = true;
         }
-    });
+    }
 </script>
