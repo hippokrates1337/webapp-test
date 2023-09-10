@@ -40,17 +40,52 @@ route.get('/resourceTypes', async (req, res) => {
 route.get('/benchmarkdata', async (req, res) => {
     console.log('PublicData.js - Received request for benchmark data...');
 
-    console.log('Params: ');
-    console.log(req.query);
-
     let sample, timeseries, resources;
     let result = [];
+    let query = {};
+
+    // Create database search query
+    // TO DO: Add further attributes to filter on
+    if(Object.keys(req.query).length > 0) {
+        if(req.query.sqmEnabled && req.query.sqmEnabled === 'true') {
+            query['sqm'] = {
+                $gte: req.query.sqmFrom,
+                $lte: req.query.sqmTo
+            };
+        }
+
+        if(req.query.typeEnabled && req.query.typeEnabled === 'true') {
+            query['type'] = req.query.type;
+        }
+
+        if(req.query.adultsEnabled && req.query.adultsEnabled === 'true') {
+            query['adults'] = {
+                $gte: req.query.adultsFrom,
+                $lte: req.query.adultsTo
+            };
+        }
+
+        if(req.query.childrenEnabled && req.query.childrenEnabled === 'true') {
+            query['children'] = {
+                $gte: req.query.childrenFrom,
+                $lte: req.query.childrenTo
+            };
+        }
+
+        if(req.query.gardenEnabled && req.query.gardenEnabled === 'true') {
+            query['garden'] = true;
+        }
+
+        if(req.query.coldWaterOnlyEnabled && req.query.coldWaterOnlyEnabled === 'true') {
+            query['coldWaterOnly'] = true;
+        }
+    }
 
     try {
         resources = await ResourceTypes.find().exec();
 
         // TO DO: Implement a mechanism to narrow down the sample
-        sample = await Consumer.find().select('_id').exec();
+        sample = await Consumer.find(query).select('_id').exec();
         
         for(const res of resources) {
             timeseries = await ConsumerTimeSeries.find({

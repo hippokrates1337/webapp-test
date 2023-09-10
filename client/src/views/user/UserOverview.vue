@@ -13,7 +13,7 @@
                 </div>
             </div>
         </nav>
-        <div class="tab-content p-2" id="nav-tabContent">
+        <div class="tab-content p-2" id="nav-tabContent" :key="updateKey">
             <template v-for="(res, index) in resources" :key="res.id">
                 <div class="tab-pane fade" :class="{'active show' : index == 0}" :id="'nav-' + index" role="tabpanel">
                     <LineChart 
@@ -57,6 +57,7 @@
     const { resources } = storeToRefs(resourceStore);
     const consumerStore = useConsumerStore();
     const { consumers } = storeToRefs(consumerStore);
+    const updateKey = ref(0);
 
     onMounted(async () => {
         const authStore = useAuthStore();
@@ -87,14 +88,11 @@
         }
 
         // Load benchmark time series data
-        await updateBenchmark(null);
+        await loadBenchmark(null);
         render.value = true;
     });
 
-    const updateBenchmark = async (params) => {
-        console.log('Updating benchmark with params: ');
-        console.log(params);
-        
+    const loadBenchmark = async (params) => { 
         const alertStore = useAlertStore();
         let response;
 
@@ -119,5 +117,13 @@
                 }
             }
         }
+    };
+
+    const updateBenchmark = async (params) => {      
+        // Load benchmark time series data
+        await loadBenchmark(params);
+
+        // Update chart
+        updateKey.value++;
     }
 </script>
