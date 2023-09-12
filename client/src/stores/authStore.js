@@ -65,7 +65,7 @@ export const useAuthStore = defineStore('auth', {
             consumerStore.$reset();
 
             const datapointStore = useDatapointStore();
-            datapointStore.reset();
+            datapointStore.$reset();
         },
         consentToCookies() {
             this.cookieConsent = true;
