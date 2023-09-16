@@ -88,7 +88,11 @@
             yaxis: {
                 labels: {
                     formatter: (value) => {
-                        return value.toFixed(2);
+                        if(value) {
+                            return value.toFixed(2);
+                        } else {
+                            return value;
+                        }                        
                     }
                 },
                 tickAmount: 6,
@@ -120,7 +124,11 @@
             tooltip: {
                 y: {
                     formatter: (value) => {
-                        return value.toFixed(2);
+                        if(value) {
+                            return value.toFixed(2);
+                        } else {
+                            return value;
+                        }                        
                     }
                 }
             }
