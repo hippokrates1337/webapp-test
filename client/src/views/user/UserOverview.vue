@@ -13,21 +13,23 @@
                 </div>
             </div>
         </nav>
-        <div class="tab-content p-2" id="nav-tabContent" :key="updateKey">
+        <div class="tab-content p-2" id="nav-tabContent">
             <template v-for="(res, index) in resources" :key="res.id">
                 <div class="tab-pane fade" :class="{'active show' : index == 0}" :id="'nav-' + index" role="tabpanel">
-                    <LineChart 
-                    :resource="resources[index]" 
-                    :data="userData.filter((elem) => elem.resource == resources[index]._id)" 
-                    :consumers="consumers" 
-                    :aggregate="aggregate" 
-                    :benchmark="benchmarkData.filter((elem) => elem.resource == resources[index]._id)" />
-                    <div class="container">
-                        <button class="btn btn-primary btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#configureBenchmark">Benchmark konfigurieren</button>
-                        <span class="float-end">Verbraucher im Benchmark: {{ Math.max(...benchmarkData.filter((elem) => elem.resource == resources[index]._id)[0].observations) }}</span>
-                    </div>
-                    <div class="collapse" id="configureBenchmark">
-                        <ConfigureBenchmark @updateBenchmark="updateBenchmark" />
+                    <div :key="updateKey">
+                        <LineChart 
+                        :resource="resources[index]" 
+                        :data="userData.filter((elem) => elem.resource == resources[index]._id)" 
+                        :consumers="consumers" 
+                        :aggregate="aggregate" 
+                        :benchmark="benchmarkData.filter((elem) => elem.resource == resources[index]._id)" />
+                        <div class="container">
+                            <button class="btn btn-primary btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#configureBenchmark">Benchmark konfigurieren</button>
+                            <span class="float-end">Verbraucher im Benchmark: {{ Math.max(...benchmarkData.filter((elem) => elem.resource == resources[index]._id)[0].observations) }}</span>
+                        </div>
+                        <div class="collapse" id="configureBenchmark">
+                            <ConfigureBenchmark @updateBenchmark="updateBenchmark" />
+                        </div>
                     </div>
                 </div>
             </template>
@@ -119,7 +121,7 @@
         }
     };
 
-    const updateBenchmark = async (params) => {      
+    const updateBenchmark = async (params) => {
         // Load benchmark time series data
         await loadBenchmark(params);
 

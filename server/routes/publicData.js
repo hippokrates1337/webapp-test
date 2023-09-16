@@ -45,7 +45,6 @@ route.get('/benchmarkdata', async (req, res) => {
     let query = {};
 
     // Create database search query
-    // TO DO: Add further attributes to filter on
     if(Object.keys(req.query).length > 0) {
         if(req.query.sqmEnabled && req.query.sqmEnabled === 'true') {
             query['sqm'] = {
@@ -84,7 +83,6 @@ route.get('/benchmarkdata', async (req, res) => {
     try {
         resources = await ResourceTypes.find().exec();
 
-        // TO DO: Implement a mechanism to narrow down the sample
         sample = await Consumer.find(query).select('_id').exec();
         
         for(const res of resources) {
