@@ -121,7 +121,7 @@
         }
     };
 
-    const updateBenchmark = async (params) => {      
+    const updateBenchmark = async (params) => {
         // Load benchmark time series data
         await loadBenchmark(params);
 
