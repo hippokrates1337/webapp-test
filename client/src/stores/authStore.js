@@ -2,6 +2,9 @@ import { router } from "@/router";
 import { defineStore } from "pinia";
 import axios from 'axios';
 import { useAlertStore } from "@/stores/alertStore.js";
+import { useConsumerStore } from "./consumerStore";
+import { useDatapointStore } from "./datapointStore";
+import { useResourceStore } from "./resourceStore";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -55,9 +58,21 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         logout() {
-            router.push('/account/login');
+            const alertStore = useAlertStore();
+            alertStore.$reset();
+
+            const consumerStore = useConsumerStore();
+            consumerStore.$reset();
+
+            const datapointStore = useDatapointStore();
+            datapointStore.$reset();
+
+            const resourceStore = useResourceStore();
+            resourceStore.$reset();
+            
             this.user = null,
             localStorage.removeItem('user');
+            router.push('/account/login');
         },
         consentToCookies() {
             this.cookieConsent = true;

@@ -32,7 +32,7 @@
         if(!props.aggregate) {
             for(const d of props.data) {
                 series.push({
-                    name: props.consumers ? props.consumers.filter((elem) => elem._id == d.consumer)[0].name : '',
+                    name: (props.consumers && props.consumers.filter((elem) => elem._id == d.consumer)[0]) ? props.consumers.filter((elem) => elem._id == d.consumer)[0].name : '',
                     data: d.consumption
                 });
             }
@@ -51,12 +51,8 @@
         }
       
         if(props.benchmark && props.benchmark[0]) {
-            let trimLeft = Math.floor(new Date(props.benchmark[0].days[0]) 
-                            - new Date(props.data[0].days[0]))
-                            / (1000 * 60 * 60 * 24);
-            let trimRight = Math.floor(new Date(props.benchmark[0].days[props.benchmark[0].days.length - 1]) 
-                            - new Date(props.data[0].days[props.data[0].days.length - 1]))
-                            / (1000 * 60 * 60 * 24);
+            let trimLeft = Math.max((new Date(props.data[0].days[0]) - new Date(props.benchmark[0].days[0])) / (1000 * 60 * 60 * 24), 0);
+            let trimRight = Math.max((new Date(props.benchmark[0].days[props.benchmark[0].days.length - 1]) - new Date(props.data[0].days[props.data[0].days.length - 1])) / (1000 * 60 * 60 * 24), 0);
 
             series.push({
                 name: 'Benchmark',
@@ -79,7 +75,7 @@
                 defaultLocale: 'de'
             },
             title: {
-                text: "Aggregierter " + props.resource.name + "verbrauch pro Tag"
+                text: "Aggregierter " + (props.resource ? props.resource.name : '')  + "verbrauch pro Tag"
             },
             xaxis: {
                 categories: props.data[0].days,
@@ -88,7 +84,11 @@
             yaxis: {
                 labels: {
                     formatter: (value) => {
-                        return value.toFixed(2);
+                        if(value) {
+                            return value.toFixed(2);
+                        } else {
+                            return value;
+                        }                        
                     }
                 },
                 tickAmount: 6,
@@ -120,7 +120,11 @@
             tooltip: {
                 y: {
                     formatter: (value) => {
-                        return value.toFixed(2);
+                        if(value) {
+                            return value.toFixed(2);
+                        } else {
+                            return value;
+                        }                        
                     }
                 }
             }

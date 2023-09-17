@@ -52,15 +52,34 @@ const createConsumerDailyData = async (consumers) => {
             } else {
                 if(new Date(data[0].startDate) > firstDay) padding = Math.floor((new Date(data[0].startDate) - firstDay) / (1000 * 60 * 60 * 24));         
             }
+            
             if(padding > 0) {
-                for(let i = 0; i < padding; i++) {
+                for(let i = 0; i <= padding; i++) {
                     days.push(new Date(firstDay.getTime() + i * 1000 * 60 * 60 * 24));
                     consumption.push(0);
                 }
             }
-
+            
+            let lastEndDate;
             for(let i = 0; i < data.length; i++) {
                 let duration, startDate, avgConsumption;
+
+                // Pad gaps between data points (if there is a mix between meter readings and consumption readings; for meter readings, gaps cannot occur)
+                if(i > 0) {
+                    if(data[i].type == 'Consumption') {
+                        padding = (data[i].startDate - lastEndDate) / (1000 * 60 * 60 * 24);
+                        console.log('Consumption reading')
+                        console.log(data[i].endDate)
+                        console.log(lastEndDate)
+                    } 
+
+                    if(padding > 0) {
+                        for(let i = 1; i < padding; i++) {
+                            days.push(new Date(lastEndDate.getTime() + i * 1000 * 60 * 60 * 24));
+                            consumption.push(0);
+                        }
+                    }
+                }
 
                 // Differentiate between consumption and meter reading data points
                 if(data[i].type == 'Meter') {
@@ -99,6 +118,8 @@ const createConsumerDailyData = async (consumers) => {
                     days.push(new Date(startDate.getTime() + j * 1000 * 60 * 60 * 24));
                     consumption.push(avgConsumption);
                 }
+
+                lastEndDate = new Date(startDate.getTime() + duration * 1000 * 60 * 60 * 24);
             }
 
             // Pad data at the end
@@ -120,7 +141,8 @@ const createConsumerDailyData = async (consumers) => {
                     consumer: consumer,
                     resource: resource,
                     days: days,
-                    consumption: consumption
+                    consumption: consumption,
+                    createdOn: new Date()
                 });
 
                 try {
@@ -231,7 +253,8 @@ const recreateAggregateTimeSeries = async () => {
                 resource: resource,
                 days: aggregation.days,
                 consumption: aggregation.consumption,
-                observations: aggregation.observations
+                observations: aggregation.observations,
+                createdOn: new Date()
             });
     
             try {

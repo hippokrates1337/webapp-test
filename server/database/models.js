@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema({
     lastLogin: {
         type: Date,
         required: false
+    },
+    admin: {
+        type: Boolean,
+        required: false
     }
 });
 
@@ -142,6 +146,10 @@ const ConsumerTimeSeriesSchema = new mongoose.Schema({
     consumption: {
         type: [Number],
         required: true
+    },
+    createdOn: {
+        type: Date,
+        required: false
     }
 });
 
@@ -163,6 +171,10 @@ const AggregateTimeSeriesSchema = new mongoose.Schema({
     observations: {
         type: [Number],
         required: true
+    },
+    createdOn: {
+        type: Date,
+        required: false
     }
 });
 
