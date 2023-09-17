@@ -1,0 +1,35 @@
+extends layout
+
+block layout-content
+    div.container
+        div.row.d-flex.justify-content-center
+            div.col-md-8.m-5.border.p-3
+                div.mb-3
+                    span.h4 Willkommen im Administratorbereich #{username}
+                    a(class="btn btn-danger float-end", type="button", href="/admin/logout") Abmelden
+                div.row
+                    div.col-4 Anzahl Nutzer: 
+                    div.col-1 #{userCount}
+                    div.col
+                div.row
+                    div.col-4 Anzahl Verbraucher: 
+                    div.col-1 #{consumerCount}
+                    div.col
+                div.row
+                    div.col-4 Anzahl Datenpunkte: 
+                    div.col-1 #{datapointCount}
+                    div.col
+                div.row
+                    div.col-4 Anzahl Zeitreihen (Verbraucher): 
+                    div.col-1 #{consumerTimeSeriesCount}
+                    div.col
+                div.row
+                    div.col-4 Anzahl Zeitreihen (aggregiert): 
+                    div.col-1 #{aggregateTimeSeriesCount}
+                    div.col (zuletzt aktualisiert: #{aggregateTimeSeriesLastRefresh ? aggregateTimeSeriesLastRefresh.toISOString() : ''})
+                div.row.mt-3
+                    div.col 
+                        a(class="btn btn-primary", type="button", href="/admin/recreateUserTimeSeries") Nutzer-Zeitreihen neu berechnen
+                    div.col 
+                        a(class="btn btn-primary", type="button", href="/admin/recreateAggregateTimeSeries") Aggregierte Zeitreihe neu berechnen
+                    

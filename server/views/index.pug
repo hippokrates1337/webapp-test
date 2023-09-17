@@ -1,0 +1,17 @@
+extends layout
+
+block layout-content
+    div.container
+        div.row
+            div.col-sm-8.offset-sm-2.mt-5
+                div.card.m3
+                    h4.card-header Als Administrator anmelden  
+                    div.card-body
+                        form(action="admin/login", method="GET")
+                            div.form-floating.mb-2
+                                input(id="username", name="username", type="text", class="form-control", placeholder="John Doe", required)
+                                label(for="username", class="form-label") Benutzername
+                            div.form-floating.mb-2
+                                input(id="password", name="password", type="password", class="form-control", placeholder="123", required)
+                                label(for="password", class="form-label") Passwort 
+                            button(class="btn btn-primary", type="submit") Anmelden
