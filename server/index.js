@@ -10,9 +10,9 @@ import accountRoutes from './routes/account.js';
 import adminRoutes from './routes/admin.js';
 
 
-// Configure Express app to use CORS (all origins allowed) and JSON
 console.log('Index.js - Setting up Express app...');
 
+// Configure Express app to use CORS (all origins allowed) and JSON
 const app = express();
 app.use(cors({
   origin: '*',
